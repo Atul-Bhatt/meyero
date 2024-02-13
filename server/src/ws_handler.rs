@@ -17,11 +17,11 @@ pub async fn julia_ws(mut session:actix_ws::Session, mut msg_stream: actix_ws::M
                 match msg {
                     Message::Text(text) => {
                         let julia_params: JuliaParams = serde_json::from_str(&text).unwrap();
-                        let data = julia_generate(&julia_paras);
+                        let data = julia_generate(&julia_params);
                         session.binary(data).await.unwrap();
                     }
                     Message::Binary(bin) => {
-                        session.bianry(bin).await.unwrap();
+                        session.binary(bin).await.unwrap();
                     }
                     Message::Close(reason) => {
                         break reason;

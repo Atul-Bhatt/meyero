@@ -2,8 +2,43 @@ use actix_web::{App, HttpServer, HttpRequest, HttpResponse, Error, get, web, Res
 use actix_web::middleware::Logger;
 use actix_cors::Cors;
 use actix_rt;
-
 use env_logger::Env;
+use serde::{Serialize, Deserialize};
+
+mod ws_handler;
+
+mod julia;
+use julia::{JuliaParams, julia_generate};
+
+#[derive(Serialize)]
+struct ApiData {
+    status: String,
+    data: Vec<u8>,
+}
+
+#[derive(Debug, Deserialize)]
+pub enum ResponseType {
+    Token,
+    Code
+}
+
+async fn julia_ws(req: HttpRequest, stream: web::Payload) -> Result<HttpResponse, Error> {
+    let (res, session, msg_stream) = actix_ws::handle(&req, stream)?;
+    actix_rt::spawn(ws_handler::julia_ws(session, msg_stream));
+    
+    Ok(res)
+}
+
+#[get("/julia-image")]
+async fn get_julia_image(query: web::Query<JuliaParams>) -> Result<impl Responder> {
+    let data = julia_generate(&query.into_inner());
+
+    let obj = ApiData {
+        status: "healthy".to_string(),
+        data: data
+    };
+    Ok(web::Json(obj))
+}
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
