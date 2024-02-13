@@ -50,6 +50,7 @@ async fn main() -> std::io::Result<()> {
         App::new()
             .wrap(cors)
             .wrap(Logger::default())
+            .wrap(Logger::new("%a %{User-Agent}i"))
             .service(get_julia_image)
             .service(web::resource("/ws").route(web::get().to(julia_ws)))
     })
