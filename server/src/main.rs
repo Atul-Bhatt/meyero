@@ -19,11 +19,12 @@ pub enum ResponseType {
 
 #[get("/health")]
 async fn health() -> Result<impl Responder> {
-    let obj = ApiData {
-        status: "healthy".to_string(),
-        data: "Welcome to Meyero".to_string(),
-    };
-    Ok(web::Json(obj))
+    // let obj = ApiData {
+    //     status: "healthy".to_string(),
+    //     data: "Welcome to Meyero".to_string(),
+    // };
+    // Ok(web::Json(obj))
+    Ok("Meyero is live...")
 }
 
 #[actix_web::main]
