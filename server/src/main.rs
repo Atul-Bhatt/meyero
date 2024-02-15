@@ -4,6 +4,11 @@ use actix_cors::Cors;
 use actix_rt;
 use env_logger::Env;
 use serde::{Serialize, Deserialize};
+use tokio::sync::mpsc;
+use actix_ws::Message;
+
+mod handler;
+mod websocket;
 
 #[derive(Serialize)]
 struct ApiData {
@@ -15,6 +20,12 @@ struct ApiData {
 pub enum ResponseType {
     Token,
     Code
+}
+
+pub struct Client {
+    pub user_id: usize,
+    pub topics: Vec<String>,
+    pub sender: Option<mpsc::UnboundedSender<std::result::Result<Message, Error>>>,
 }
 
 #[get("/health")]
