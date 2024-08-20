@@ -1,18 +1,7 @@
-use std::{io, net::TcpStream};
-use tungstenite::{connect, Message};
+mod node;
+mod seed;
 
-fn main() -> io::Result<()> {
-    let (mut socket, _) = connect("ws://localhost:8080")?;
-
-    socket.write_message(Message::Text("Hello from client!".to_string()))?;
-
-    loop {
-        let msg = socket.read_message()?;
-
-        match msg {
-            Message::Text(text) => println!("Server: {}", text),
-            Message::Binary(data) => println!("Server: {:?}", data),
-            _ => println!("Unexpected message type!"),
-        }
-    }
+fn main() {
+   let first_seed_server = seed::get_first_seed_server();
+   println!("{}", first_seed_server);
 }
