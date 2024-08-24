@@ -1,5 +1,6 @@
 #server
 server/target
+client/target
 
 # web dependencies
 web/node_modules

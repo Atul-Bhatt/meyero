@@ -1,7 +1,10 @@
 mod node;
 mod seed;
 
-fn main() {
-   let first_seed_server = seed::get_first_seed_server();
-   println!("{}", first_seed_server);
+use tokio::net::TcpListener;
+
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let _listener = TcpListener::bind("127.0.0.1:8080").await?;
+    Ok(())
 }
