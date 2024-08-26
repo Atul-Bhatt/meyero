@@ -14,6 +14,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             let mut buffer = [0; 1024];
             socket.read(&mut buffer).await.unwrap();
             socket.write(b"P2P Node").await.unwrap();
+            println!("{:?}", buffer)
         });
     }
 }
