@@ -4,6 +4,7 @@ mod seed;
 use tokio::net::TcpListener;
 use tokio::io::AsyncReadExt;
 use std::error::Error;
+use serde_json::{self, Value};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
@@ -12,9 +13,12 @@ async fn main() -> Result<(), Box<dyn Error>> {
     loop {
         let (mut socket, _) = listener.accept().await?;
         tokio::spawn(async move {
-            let mut buffer = [0; 1024];
+            let mut buffer = [0; 72];
             socket.read(&mut buffer).await.unwrap();
-            println!("{:?}", buffer)
+
+            // deserialize the buffer
+            let v: Value = serde_json::from_slice(&buffer).unwrap();
+            println!("{} said {}", v["sender_id"], v["message"]);
         });
     }
 }
