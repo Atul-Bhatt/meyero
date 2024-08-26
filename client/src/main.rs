@@ -2,10 +2,11 @@ mod node;
 mod seed;
 
 use tokio::net::TcpListener;
-use tokio::io::{AsyncReadExt, AsyncWriteExt};
+use tokio::io::AsyncReadExt;
+use std::error::Error;
 
 #[tokio::main]
-async fn main() -> Result<(), Box<dyn std::error::Error>> {
+async fn main() -> Result<(), Box<dyn Error>> {
     let listener = TcpListener::bind("127.0.0.1:8080").await?;
 
     loop {
@@ -13,7 +14,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         tokio::spawn(async move {
             let mut buffer = [0; 1024];
             socket.read(&mut buffer).await.unwrap();
-            socket.write(b"P2P Node").await.unwrap();
             println!("{:?}", buffer)
         });
     }
