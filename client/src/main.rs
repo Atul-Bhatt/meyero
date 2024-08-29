@@ -5,9 +5,14 @@ use tokio::net::TcpListener;
 use tokio::io::AsyncReadExt;
 use std::error::Error;
 use serde_json::{self, Value};
+use tracing::Level;
+use tracing_subscriber;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
+    tracing_subscriber::fmt()
+        .with_max_level(Level::DEBUG)
+        .init();
     /*
     let listener = TcpListener::bind("127.0.0.1:8080").await?;
 
