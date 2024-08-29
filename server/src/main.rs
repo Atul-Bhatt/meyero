@@ -1,3 +1,5 @@
+mod node;
+
 use tokio::net::TcpStream;
 use tokio::io::AsyncWriteExt;
 use serde_json::json;

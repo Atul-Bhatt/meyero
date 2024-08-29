@@ -8,6 +8,7 @@ use serde_json::{self, Value};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
+    /*
     let listener = TcpListener::bind("127.0.0.1:8080").await?;
 
     loop {
@@ -21,4 +22,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
             println!("{} said {}", v["sender_id"], v["message"]);
         });
     }
+    */
+    let _dht_client = node::dht_client();
+    Ok(())
 }
