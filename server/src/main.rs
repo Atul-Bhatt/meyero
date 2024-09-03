@@ -1,23 +1,11 @@
-mod node;
+use server::run;
+use std::net::TcpListener;
 
-use tokio::net::TcpStream;
-use tokio::io::AsyncWriteExt;
-use serde_json::json;
-use std::error::Error;
+#[actix_web::main]
+async fn main() -> std::io::Result<()> {
+    let listener = TcpListener::bind("127.0.0.1:0")
+        .expect("Failed to bind port");
+    println!("Running on port: {}", listener.local_addr().unwrap().port());
 
-#[tokio::main]
-async fn main() -> Result<(), Box<dyn Error>> {
-    let message = json!({
-        "sender_id": "Node A",
-        "recipient_id": "Node B",
-        "message": "Hello, Node B",
-    });
-
-    let message_str = message.to_string();
-    let mut stream = TcpStream::connect("127.0.0.1:8080").await?;
-
-    stream.write_all(message_str.as_bytes()).await?;
-    stream.flush().await?;
-
-    Ok(())
+    run(listener)?.await
 }
