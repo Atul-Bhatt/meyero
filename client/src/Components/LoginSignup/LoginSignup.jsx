@@ -2,41 +2,43 @@ import './LoginSignup.css'
 
 import google_logo from '../Assets/google_logo.png'
 import apple_logo from '../Assets/apple_logo.png'
+import login_background from '../Assets/login_background.jpg'
 
 const LoginSignup = () => {
     return (
-        <div className='container'>
+       <div className="main-container">
+        <div className="left-container">
+            <img src={login_background} alt="" className="background-image" />
+        </div>
+        <div className='right-container'>
         <div className="header">
             <div className="text">Log in</div>
         </div>
-        <div className="otherlogins">
-            <button className="otherLoginButton">
+        <div className="other-logins">
+            <button className="other-login-button">
                 <img src={google_logo} alt="google_logo"></img>
-                Continue with Google
+                <span>Continue with Google</span>
             </button>
             <br/>
-            <button className="otherLoginButton">
+            <button className="other-login-button">
                 <img src={apple_logo} alt="apple_logo" />
-                Continue with Apple
+                <span>Continue with Apple</span>
             </button>
         </div>
-        <p>OR</p>
+        <div class="line-container">
+            <p><span>OR</span></p>
+        </div> 
         <div className="inputs">
             <div className="input">
-                <input type="text" />
+                <input type="text" placeholder="Username" />
             </div>
             <div className="input">
-                <input type="password" />
+                <input type="password" placeholder="Password" />
             </div>
         </div>
-        <button className="loginButton">
-            LOG IN
-        </button>
-        <div className="forgotUsernamePassword">
-           Forgot your <a>username</a> or <a>password</a>?
+        <div className="submit-container">
+            <button>LOG IN</button>
         </div>
-        <div className="goToSignUp">
-            New to Meyero? <a>SIGN UP</a>
         </div>
         </div>
     );
