@@ -6,7 +6,7 @@ import login_background from '../Assets/login_background.jpg'
 
 const LoginSignup = () => {
     return (
-       <div className="main-container">
+		<div className="main-container">
         <div className="left-container">
             <img src={login_background} alt="" className="background-image" />
         </div>
@@ -40,7 +40,7 @@ const LoginSignup = () => {
             <button>LOG IN</button>
         </div>
         </div>
-        </div>
+		</div>
     );
 }
 
