@@ -1,5 +1,6 @@
 import useWebSocket, { ReadyState } from "react-use-websocket"
 import {useEffect} from 'react';
+import JsonViewer from 'react-json-viewer';
 
 export const WebSocket = () => {
 	const WS_URL = "ws://localhost:8080"
@@ -31,7 +32,7 @@ export const WebSocket = () => {
 	return (
         <div>
             <p>Hello</p>
-            <p>{lastJsonMessage}</p>
+            <JsonViewer data={lastJsonMessage} />
         </div>
     ) 
 }
