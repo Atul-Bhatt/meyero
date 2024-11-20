@@ -26,7 +26,7 @@ export const WebSocket = () => {
 	}, [readyState])
 
 	useEffect(() => {
-		console.log(`Got a new message: ${lastJsonMessage}`)
+		console.log(`Got a new message: ${JSON.stringify(lastJsonMessage)}`)
 	}, [lastJsonMessage])
 
 	const handleSendMessage = (event) => {
@@ -48,7 +48,7 @@ export const WebSocket = () => {
 				type="text"
 				onKeyDownCapture={handleSendMessage}>
 			</input>
-            <JsonViewer data={lastJsonMessage} />
+            <p>Message from server: {lastJsonMessage?.data.message}</p>
         </div>
     ) 
 }
