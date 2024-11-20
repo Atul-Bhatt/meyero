@@ -29,9 +29,25 @@ export const WebSocket = () => {
 		console.log(`Got a new message: ${lastJsonMessage}`)
 	}, [lastJsonMessage])
 
+	const handleSendMessage = (event) => {
+		if (event.key === 'Enter') {
+			console.log('Sending message to server')
+			sendJsonMessage({
+				event: "subscribe",
+				data: {
+					channel: "general-chatroom",
+					message: event.target.value 
+				}
+			})
+		}
+	}
+
 	return (
         <div>
-            <p>Hello</p>
+			<input
+				type="text"
+				onKeyDownCapture={handleSendMessage}>
+			</input>
             <JsonViewer data={lastJsonMessage} />
         </div>
     ) 
