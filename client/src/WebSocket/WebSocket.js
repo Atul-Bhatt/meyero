@@ -1,6 +1,6 @@
 import useWebSocket, { ReadyState } from "react-use-websocket"
 import {useEffect} from 'react';
-import JsonViewer from 'react-json-viewer';
+import Chat from "../Components/Chat/Chat";
 
 export const WebSocket = () => {
 	const WS_URL = "ws://localhost:8080"
@@ -43,13 +43,8 @@ export const WebSocket = () => {
 	}
 
 	return (
-        <div>
-			<input
-				type="text"
-				onKeyDownCapture={handleSendMessage}>
-			</input>
-            <p>Message from server: {lastJsonMessage?.data.message}</p>
-        </div>
+		<Chat lastJsonMessage={lastJsonMessage} 
+			handleSendMessage={handleSendMessage}/>
     ) 
 }
 
