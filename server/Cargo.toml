@@ -6,18 +6,11 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-actix-web = "4.9.0"
-serde = {version = "1.0.209", features = ["derive"]}
-sqlx = {version="0.8.2", features = ["postgres", "runtime-tokio"]}
-
-[lib]
-path = "src/lib.rs"
+futures-util = "0.3.31"
+tokio = { version = "1", features = ["full"] }
+tokio-tungstenite = "0.24.0"
+tungstenite = "0.24.0"
 
 [[bin]]
 path = "src/main.rs"
 name = "server"
-
-[dev-dependencies]
-actix-rt = "2.10.0"
-reqwest = "0.12.7"
-tokio = "1.40.0"

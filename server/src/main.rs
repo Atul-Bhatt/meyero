@@ -1,15 +1,32 @@
-use server::run;
-use std::net::TcpListener;
-use sqlx::PgPool;
+use tokio_tungstenite::accept_async;
+use tokio_tungstenite::tungstenite::Message;
+use tokio::net::TcpListener;
+use futures_util::{StreamExt, SinkExt};
 
-#[actix_web::main]
-async fn main() -> std::io::Result<()> {
-    let pool = PgPool::connect(&std::env::var("DATABASE_URL").unwrap()).await.unwrap();
-    sqlx::migrate!().run(&pool).await.unwrap();
+#[tokio::main]
+async fn main() {
+    let listener = TcpListener::bind("localhost:8080").await.unwrap();
 
-    let listener = TcpListener::bind("127.0.0.1:0")
-        .expect("Failed to bind port");
-    println!("Running on port: {}", listener.local_addr().unwrap().port());
+    while let Ok((stream, _)) = listener.accept().await {
+        let ws_stream = accept_async(stream).await.unwrap();
+        tokio::spawn(handle_connection(ws_stream));
+    }
+}
 
-    run(listener)?.await
+async fn handle_connection(mut stream: tokio_tungstenite::WebSocketStream<tokio::net::TcpStream>) {
+    while let Some(msg) = stream.next().await {
+        match msg {
+            Ok(msg) => {
+                if let Message::Text(text) = msg {
+                    println!("Received: {}", text);
+
+                    stream.send(Message::Text(text)).await.unwrap();
+                }
+            }
+            Err(e) => {
+                eprintln!("Error: {}", e);
+                break;
+            }
+        }
+    }
 }
