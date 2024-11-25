@@ -1,4 +1,6 @@
 mod websocket;
+mod routes;
+mod models;
 
 use actix_web::{web, App, HttpServer, Responder};
 use tokio_tungstenite::accept_async;
