@@ -5,6 +5,7 @@ use tokio_tungstenite::accept_async;
 use tokio::net::TcpListener;
 use std::env;
 use dotenv::dotenv;
+use sqlx::PgPool;
 
 async fn health_check() -> impl Responder {
     "Hello! Welcome to Meyero."
@@ -14,12 +15,15 @@ async fn health_check() -> impl Responder {
 async fn main() {
     dotenv().ok();
 
-   HttpServer::new(|| {
-    App::new().route("/", web::get().to(health_check))
-   })
-   .bind("localhost:8081").unwrap()
-   .run()
-   .await;
+   let pool = PgPool::connect(&env::var("DATABASE_URL").unwrap()).await.unwrap();
+   sqlx::migrate!().run(&pool).await.unwrap(); 
+
+   let _ = HttpServer::new(|| {
+        App::new().route("/", web::get().to(health_check))
+    })
+    .bind("localhost:8081").unwrap()
+    .run()
+    .await;
 
     let url = env::var("WEBSOCKET_URL").expect("Error getting _WEBSOCKET_URL");
     let listener = TcpListener::bind(url).await.unwrap();

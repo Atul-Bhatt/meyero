@@ -9,6 +9,7 @@ edition = "2021"
 actix-web = "4.9.0"
 dotenv = "0.15.0"
 futures-util = "0.3.31"
+sqlx = { version = "0.8.2", features = ["postgres", "runtime-tokio"]}
 tokio = { version = "1", features = ["full"] }
 tokio-tungstenite = "0.24.0"
 tungstenite = "0.24.0"
