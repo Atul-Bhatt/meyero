@@ -2,15 +2,16 @@ mod websocket;
 mod routes;
 mod models;
 
-use actix_web::{web, App, HttpServer, Responder};
+use actix_web::{web, App, HttpServer};
+use actix_web::middleware::Logger;
 use tokio_tungstenite::accept_async;
 use tokio::net::TcpListener;
 use std::env;
 use dotenv::dotenv;
-use sqlx::PgPool;
+use sqlx::{PgPool, Postgres, Pool};
 
-async fn health_check() -> impl Responder {
-    "Hello! Welcome to Meyero."
+pub struct AppState {
+    db: Pool<Postgres>,
 }
 
 #[actix_web::main]
@@ -20,8 +21,11 @@ async fn main() {
    let pool = PgPool::connect(&env::var("DATABASE_URL").unwrap()).await.unwrap();
    sqlx::migrate!().run(&pool).await.unwrap(); 
 
-   let _ = HttpServer::new(|| {
-        App::new().route("/", web::get().to(health_check))
+   let _ = HttpServer::new(move || {
+        App::new()
+        .app_data(web::Data::new(AppState {db: pool.clone() }))
+        .configure(routes::user_routes::config)
+        .wrap(Logger::default())
     })
     .bind("localhost:8081").unwrap()
     .run()
