@@ -1,8 +1,9 @@
-use crate::models::user_model::User;
+use crate::models::user_model::{User, UpdateUser};
 use crate::AppState;
 use serde_json;
+use chrono::Utc;
 
-use actix_web::{get, post, web, Result, Responder, HttpResponse};
+use actix_web::{get, post, patch, delete, web, Responder, HttpResponse};
 
 #[get("/list")]
 async fn get_all_users(
@@ -67,10 +68,81 @@ async fn insert_user(
     }
 }
 
+#[patch("/{id}")]
+async fn edit_user(
+    path: web::Path<uuid::Uuid>,
+    body: web::Json<UpdateUser>,
+    data: web::Data<AppState>,
+) -> impl Responder {
+    let user_id = path.into_inner();
+    let query_result = sqlx::query_as!(User, "SELECT * FROM users WHERE id = $1", user_id)
+        .fetch_one(&data.db)
+        .await;
+
+    if query_result.is_err() {
+        let message = format!("User with ID: {} not found", user_id);
+        return HttpResponse::NotFound()
+            .json(serde_json::json!({"status": "fail","message": message}));
+    }
+
+    let now = Utc::now();
+    let user = query_result.unwrap();
+
+    let query_result = sqlx::query_as!(
+        User,
+        "UPDATE users SET username = $1, email = $2, name = $3, updated_at = $4 WHERE id = $5 RETURNING *",
+        body.username.to_owned().unwrap_or(user.username),
+        body.email.to_owned().unwrap_or(user.email),
+        body.name.to_owned().unwrap_or(user.name),
+        now,
+        user_id 
+    )
+    .fetch_one(&data.db)
+    .await
+    ;
+
+    match query_result {
+        Ok(user) => {
+            let user_response = serde_json::json!({"status": "success","data": serde_json::json!({
+                "user":user 
+            })});
+
+            return HttpResponse::Ok().json(user_response);
+        }
+        Err(err) => {
+            let message = format!("Error: {:?}", err);
+            return HttpResponse::InternalServerError()
+                .json(serde_json::json!({"status": "error","message": message}));
+        }
+    }
+}
+
+#[delete("/{id}")]
+async fn delete_user(
+    path: web::Path<uuid::Uuid>,
+    data: web::Data<AppState>,
+) -> impl Responder {
+    let user_id = path.into_inner();
+    let rows_affected = sqlx::query!("DELETE FROM users  WHERE id = $1", user_id)
+        .execute(&data.db)
+        .await
+        .unwrap()
+        .rows_affected();
+
+    if rows_affected == 0 {
+        let message = format!("User with ID: {} not found", user_id);
+        return HttpResponse::NotFound().json(serde_json::json!({"status": "fail","message": message}));
+    }
+
+    HttpResponse::NoContent().finish()
+}
+
 pub fn config(conf: &mut web::ServiceConfig) {
     let scope = web::scope("/user")
         .service(get_all_users)
-        .service(insert_user);
+        .service(insert_user)
+        .service(edit_user)
+        .service(delete_user);
 
     conf.service(scope);
 }
