@@ -5,8 +5,29 @@ use serde_json;
 use actix_web::{get, post, web, Result, Responder, HttpResponse};
 
 #[get("/list")]
-async fn get_all_users() -> Result<String> {
-    Ok(format!("Not implemented yet!"))
+async fn get_all_users(
+    data: web::Data<AppState>,
+) -> impl Responder {
+    let query_result = sqlx::query_as!(
+        User,
+        "Select * From users"
+    )
+    .fetch_all(&data.db)
+    .await;
+
+    if query_result.is_err() {
+        let message = "Error occured while fetching all users";
+        return HttpResponse::InternalServerError()
+            .json(serde_json::json!({"status": "error","message": message}));
+    }
+
+    let users = query_result.unwrap();
+    let json_response = serde_json::json!({
+        "status": "success",
+        "results": users.len(),
+        "uses": users
+    });
+    HttpResponse::Ok().json(json_response)
 }
 
 #[post("/insert")]
