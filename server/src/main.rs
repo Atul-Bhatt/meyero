@@ -17,7 +17,8 @@ pub struct AppState {
 #[actix_web::main]
 async fn main() {
     dotenv().ok();
-
+    env_logger::init();
+    
    let pool = PgPool::connect(&env::var("DATABASE_URL").unwrap()).await.unwrap();
    sqlx::migrate!().run(&pool).await.unwrap(); 
 

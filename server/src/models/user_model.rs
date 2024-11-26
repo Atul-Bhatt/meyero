@@ -1,14 +1,15 @@
 use uuid::Uuid;
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
+use sqlx::FromRow;
 
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Serialize, FromRow)]
 pub struct User {
-    id: Uuid,
+    pub id: Uuid,
     pub username: String,
     pub email: String,
     pub name: String,
     pub password: String,
-    created_at: DateTime<Utc>,
-    updated_at: DateTime<Utc>
+    pub created_at: DateTime<Utc>,
+    pub updated_at: DateTime<Utc> 
 }
