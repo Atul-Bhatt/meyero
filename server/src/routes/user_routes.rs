@@ -1,4 +1,5 @@
 use crate::models::user_model::{User, UpdateUser};
+use argon2::{Argon2, PasswordHasher, PasswordVerifier, password_hash::Salt};
 use crate::AppState;
 use serde_json;
 use chrono::Utc;
@@ -135,6 +136,45 @@ async fn delete_user(
     }
 
     HttpResponse::NoContent().finish()
+}
+
+#[post("/login")]
+async fn login(
+   user: web::Json<UserLogin>,
+   data: web::Data<AppState>, 
+) -> impl Responder {
+    let query_result = sqlx::query_as!(User, "SELECT * FROM users WHERE username = $1", user.username)
+        .fetch_one(&data.db)
+        .await;
+
+    if query_result.is_err() {
+        let message = format!("User with username: {} not found", user.username);
+        return HttpResponse::NotFound()
+            .json(serde_json::json!({"status": "fail","message": message}));
+    }
+
+    let db_user = query_result.unwrap();
+
+    let salf = SaltString::generate(&mut OsRng);
+    let hash = argon2.hash_password(user.password.as_bytes(), salt).unwrap();
+
+    compare_pass = Argon2::default().verify_password(db_user.password.as_bytes(), &hash);
+
+    match compare_pass {
+        Ok(user) => {
+            let user_response = serde_json::json!({"status": "success","data": serde_json::json!({
+                "user":user 
+            })});
+
+            return HttpResponse::Ok().json(user_response);
+        }
+        Err(err) => {
+            let message = format!("Error: {:?}", err);
+            return HttpResponse::InternalServerError()
+                .json(serde_json::json!({"status": "error","message": message}));
+        }
+    }
+    
 }
 
 pub fn config(conf: &mut web::ServiceConfig) {
