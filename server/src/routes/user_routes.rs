@@ -121,7 +121,7 @@ async fn login(
     let db_user = query_result.unwrap();
 
     let salt = SaltString::generate(&mut OsRng);
-    let hash = argon2.hash_password(user.password.as_bytes(), salt).unwrap();
+    let hash = Argon2::default().hash_password(user.password.as_bytes(), &salt).unwrap();
 
     let compare_pass = Argon2::default().verify_password(db_user.password.as_bytes(), &hash);
 
@@ -148,7 +148,7 @@ async fn signup(
     data: web::Data<AppState>,
 ) -> impl Responder {
     let salt = SaltString::generate(&mut OsRng);
-    let hashed_pass = Argon2::default().hash_password(user.password.clone().as_bytes(), salt);
+    let hashed_pass = Argon2::default().hash_password(user.password.clone().as_bytes(), &salt);
 
     let query_result = sqlx::query_as!(
         User,
@@ -156,7 +156,7 @@ async fn signup(
         user.username.to_string(),
         user.email.to_string(),
         user.name.to_string(),
-        hashed_pass.to_string(), 
+        hashed_pass.unwrap().to_string(), 
     )
     .fetch_one(&data.db)
     .await;
