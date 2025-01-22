@@ -1,7 +1,10 @@
+mod service;
+
 use crate::models::user_model::{User, UpdateUser, UserLogin};
 use argon2::{Argon2, PasswordHasher, PasswordVerifier, password_hash::SaltString};
 use rand_core::OsRng;
 use crate::AppState;
+use crate::service;
 use serde_json;
 use chrono::Utc;
 
@@ -126,9 +129,12 @@ async fn login(
     let compare_pass = Argon2::default().verify_password(db_user.password.as_bytes(), &hash);
 
     match compare_pass {
-        Ok(user) => {
+        Ok(_) => {
+            // generate jwt token
+            let token = service.get_jwt_token(db_user.id);
             let user_response = serde_json::json!({"status": "success","data": serde_json::json!({
-                "user":user 
+                "user":db_user,
+                "token": token,
             })});
 
             return HttpResponse::Ok().json(user_response);
