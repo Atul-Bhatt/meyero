@@ -1,6 +1,8 @@
 mod websocket;
 mod routes;
 mod models;
+mod service;
+mod repository;
 
 use actix_web::{web, App, HttpServer};
 use actix_web::middleware::Logger;

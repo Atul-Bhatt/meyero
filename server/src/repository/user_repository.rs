@@ -1,8 +1,9 @@
 use uuid::Uuid;
 use jsonwebtoken::{encode, Header, EncodingKey, Algorithm};
 use serde_json::json;
+use crate::AppState;
 
-pub fn generate_jwt_token(user_id: Uuid) -> String {
+fn generate_jwt_token(user_id Uuid) -> String {
     let current_time = chrono::Utc::now().timestamp();
     let expiration_time = current_time + 86400; // one day
     let claims = json!({
@@ -10,7 +11,5 @@ pub fn generate_jwt_token(user_id: Uuid) -> String {
         "exp": expiration_time
     });
 
-    encode(&Header::new(Algorithm::HS256), &claims, &EncodingKey.from_secret("jwt_secret".as_ref())).unwrap()
+    encode(&Header::new(Algorithm::HS256), &claims, &EncodingKey.from_secret("jwt_secret".as_ref())).unwrap();
 }
-
-
