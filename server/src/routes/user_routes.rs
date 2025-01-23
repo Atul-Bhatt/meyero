@@ -13,7 +13,7 @@ use actix_web::{get, post, patch, delete, web, Responder, HttpResponse};
 async fn get_all_users(
     data: web::Data<AppState>,
 ) -> impl Responder {
-    let result =  repository::user_repository::get_all_users(data).await;
+    let result =  repository::user_repository::get_all_users(&data).await;
     if result.is_err() {
         let message = "Error occured while fetching all users";
         return HttpResponse::InternalServerError()
@@ -37,33 +37,19 @@ async fn edit_user(
     data: web::Data<AppState>,
 ) -> impl Responder {
     let user_id = path.into_inner();
-    let query_result = sqlx::query_as!(User, "SELECT * FROM users WHERE id = $1", user_id)
-        .fetch_one(&data.db)
-        .await;
 
-    if query_result.is_err() {
+    let result = repository::user_repository::get_user_by_id(&data, &user_id).await;
+    if result.is_err() {
         let message = format!("User with ID: {} not found", user_id);
         return HttpResponse::NotFound()
             .json(serde_json::json!({"status": "fail","message": message}));
     }
 
     let now = Utc::now();
-    let user = query_result.unwrap();
+    let user = result.unwrap();
 
-    let query_result = sqlx::query_as!(
-        User,
-        "UPDATE users SET username = $1, email = $2, name = $3, updated_at = $4 WHERE id = $5 RETURNING *",
-        body.username.to_owned().unwrap_or(user.username),
-        body.email.to_owned().unwrap_or(user.email),
-        body.name.to_owned().unwrap_or(user.name),
-        now,
-        user_id 
-    )
-    .fetch_one(&data.db)
-    .await
-    ;
-
-    match query_result {
+    let result = repository::user_repository::update_user(&data, body).await;
+    match result {
         Ok(user) => {
             let user_response = serde_json::json!({"status": "success","data": serde_json::json!({
                 "user":user 
@@ -85,12 +71,7 @@ async fn delete_user(
     data: web::Data<AppState>,
 ) -> impl Responder {
     let user_id = path.into_inner();
-    let rows_affected = sqlx::query!("DELETE FROM users  WHERE id = $1", user_id)
-        .execute(&data.db)
-        .await
-        .unwrap()
-        .rows_affected();
-
+    let rows_affected = repository::user_repository::delete_user(&data, &user_id).await;
     if rows_affected == 0 {
         let message = format!("User with ID: {} not found", user_id);
         return HttpResponse::NotFound().json(serde_json::json!({"status": "fail","message": message}));
@@ -104,17 +85,14 @@ async fn login(
    user: web::Json<UserLogin>,
    data: web::Data<AppState>, 
 ) -> impl Responder {
-    let query_result = sqlx::query_as!(User, "SELECT * FROM users WHERE username = $1", user.username)
-        .fetch_one(&data.db)
-        .await;
-
-    if query_result.is_err() {
+    let result = repository::user_repository::get_user_by_username(&data, &user.username).await;
+    if result.is_err() {
         let message = format!("User with username: {} not found", user.username);
         return HttpResponse::NotFound()
             .json(serde_json::json!({"status": "fail","message": message}));
     }
 
-    let db_user = query_result.unwrap();
+    let db_user = result.unwrap();
 
     let salt = SaltString::generate(&mut OsRng);
     let hash = Argon2::default().hash_password(user.password.as_bytes(), &salt).unwrap();
@@ -149,18 +127,8 @@ async fn signup(
     let salt = SaltString::generate(&mut OsRng);
     let hashed_pass = Argon2::default().hash_password(user.password.clone().as_bytes(), &salt);
 
-    let query_result = sqlx::query_as!(
-        User,
-        "Insert Into users (username, email, name, password) VALUES ($1, $2, $3, $4) Returning *",
-        user.username.to_string(),
-        user.email.to_string(),
-        user.name.to_string(),
-        hashed_pass.unwrap().to_string(), 
-    )
-    .fetch_one(&data.db)
-    .await;
-
-    match query_result {
+    let result = repository::user_repository::add_user(&data, &user, hashed_pass.unwrap().to_string()).await;
+    match result {
         Ok(result) => {
             let response = serde_json::json!({"status": "success", "data": serde_json::json!({
                 "user": result
