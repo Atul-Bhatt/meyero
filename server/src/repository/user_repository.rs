@@ -1,15 +1,16 @@
-use uuid::Uuid;
-use jsonwebtoken::{encode, Header, EncodingKey, Algorithm};
-use serde_json::json;
+use crate::models::user_model::User;
+use std::io::Error;
 use crate::AppState;
+use actix_web::web;
+use uuid::Uuid;
 
-fn generate_jwt_token(user_id Uuid) -> String {
-    let current_time = chrono::Utc::now().timestamp();
-    let expiration_time = current_time + 86400; // one day
-    let claims = json!({
-        "sub": "public_key",
-        "exp": expiration_time
-    });
+pub async fn get_all_users(data: web::Data<AppState>) -> Result<Vec<User>, Error> {
+    let query_result = sqlx::query_as!(
+        User,
+        "Select * From users"
+    )
+    .fetch_all(&data.db)
+    .await;
 
-    encode(&Header::new(Algorithm::HS256), &claims, &EncodingKey.from_secret("jwt_secret".as_ref())).unwrap();
+    query_result.unwrap()
 }

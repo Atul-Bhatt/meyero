@@ -1,1 +1,1 @@
-pub mod user_repository.rs 
+pub mod user_repository;

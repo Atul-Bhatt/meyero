@@ -13,20 +13,14 @@ use actix_web::{get, post, patch, delete, web, Responder, HttpResponse};
 async fn get_all_users(
     data: web::Data<AppState>,
 ) -> impl Responder {
-    let query_result = sqlx::query_as!(
-        User,
-        "Select * From users"
-    )
-    .fetch_all(&data.db)
-    .await;
-
-    if query_result.is_err() {
+    let result =  repository::user_repository::get_all_users(data).await;
+    if result.is_err() {
         let message = "Error occured while fetching all users";
         return HttpResponse::InternalServerError()
             .json(serde_json::json!({"status": "error","message": message}));
     }
 
-    let users = query_result.unwrap();
+    let users = result.unwrap();
     let json_response = serde_json::json!({
         "status": "success",
         "results": users.len(),
