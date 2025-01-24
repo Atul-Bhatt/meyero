@@ -103,6 +103,17 @@ async fn login(
         Ok(_) => {
             // generate jwt token
             let token = service::user_service::generate_jwt_token(db_user.id);
+            // add jwt token to db
+            let result = repository::user_repository::add_token(&data, &db_user.id, &token).await;
+            match result {
+                Err(err) => {
+                    let message = format!("Error: {:?}", err);
+                    return HttpResponse::InternalServerError()
+                        .json(serde_json::json!({"status": "error","message": message}));
+                }
+                _ => ()
+            }
+
             let user_response = serde_json::json!({"status": "success","data": serde_json::json!({
                 "user":db_user,
                 "token": token,

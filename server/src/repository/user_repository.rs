@@ -70,3 +70,16 @@ pub async fn add_user(data: &web::Data<AppState>, user: &User, hashed_pass: Stri
 
     query_result.unwrap()
 }
+
+pub async fn add_token(data: &web::Data<AppState>, user_id: &Uuid, token: &String) -> Result<(), Error> {
+    let query_result = sqlx::query_as!(
+        User,
+        "Insert Into token (user_id, token) VALUES ($1, $2)",
+        user_id,
+        token
+    )
+    .execute(&data.db)
+    .await;
+
+    query_result.unwrap()
+} 
