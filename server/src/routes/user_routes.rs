@@ -45,9 +45,6 @@ async fn edit_user(
             .json(serde_json::json!({"status": "fail","message": message}));
     }
 
-    let now = Utc::now();
-    let user = result.unwrap();
-
     let result = repository::user_repository::update_user(&data, body).await;
     match result {
         Ok(user) => {
