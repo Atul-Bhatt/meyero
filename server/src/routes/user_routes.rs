@@ -157,6 +157,28 @@ async fn signup(
     }
 }
 
+#[get("/search")]
+async fn search_user(
+    username: web::Json<SearchUser>,
+    data: web::Data<AppState>,
+) -> impl Responder {
+   // search all users where substring matches 
+   let result = repository::user_repository::search_username(&data, &username.name);
+   
+    match result {
+        Ok(result) => {
+            let response = serde_json::json!({"status": "success", "data": serde_json::json!({
+                "users": result
+            })});
+            return HttpResponse::Ok().json(response);
+        }
+        Err(e) => {
+            return HttpResponse::InternalServerError()
+                .json(serde_json::json!({"status": "error", "message": format!("{:?}", e)}));
+        }
+    }
+}
+
 pub fn config(conf: &mut web::ServiceConfig) {
     let scope = web::scope("/user")
         .service(get_all_users)
