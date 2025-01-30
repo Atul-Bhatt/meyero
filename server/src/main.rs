@@ -28,6 +28,7 @@ async fn main() {
         App::new()
         .app_data(web::Data::new(AppState {db: pool.clone() }))
         .configure(routes::user_routes::config)
+        .configure(routes::message_routes::config)
         .wrap(Logger::default())
     })
     .bind("localhost:8081").unwrap()
