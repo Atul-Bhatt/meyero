@@ -83,3 +83,11 @@ pub async fn add_token(data: &web::Data<AppState>, user_id: &Uuid, token: &Strin
 
     query_result.unwrap()
 } 
+
+pub async fn search_username_substring(data: &web::Data<AppState>, username_substring: &String) -> Result<Vec<User>, Error> {
+    let query_result = sqlx::query_as!(User, "SELECT * FROM users WHERE username ilike %$1%", username_substring)
+        .fetch_all(&data.db)
+        .await;
+    
+    query_result.unwrap()
+}

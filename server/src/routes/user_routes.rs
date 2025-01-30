@@ -163,7 +163,7 @@ async fn search_user(
     data: web::Data<AppState>,
 ) -> impl Responder {
    // search all users where substring matches 
-   let result = repository::user_repository::search_username(&data, &username.name);
+   let result = repository::user_repository::search_username_substring(&data, &username.name);
    
     match result {
         Ok(result) => {
