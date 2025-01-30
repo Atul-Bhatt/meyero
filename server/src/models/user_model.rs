@@ -26,3 +26,8 @@ pub struct UserLogin {
     pub username: String,
     pub password: String,
 }
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct SearchUser {
+    pub name: String,
+}

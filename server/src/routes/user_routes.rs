@@ -1,4 +1,4 @@
-use crate::models::user_model::{User, UpdateUser, UserLogin};
+use crate::models::user_model::{User, UpdateUser, UserLogin, SearchUser};
 use argon2::{Argon2, PasswordHasher, PasswordVerifier, password_hash::SaltString};
 use rand_core::OsRng;
 use crate::AppState;
