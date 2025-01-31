@@ -1,4 +1,4 @@
-use crate::models::message_model::MessageChannel;
+use crate::{models::message_model::MessageChannel, repository};
 use crate::AppState;
 use actix_web::{get, post, patch, delete, web, Responder, HttpResponse};
 
@@ -9,8 +9,12 @@ pub async fn initiate_messaging(
 ) -> impl Responder {
     // Start a websocket between two users
     
+    // check if a message channle already exists
+    let result = repository::message_repository::channel_exists(&data, &message_channel);
+    
 
     // insert empty message between users
+    
    String::from("") 
 }
 
