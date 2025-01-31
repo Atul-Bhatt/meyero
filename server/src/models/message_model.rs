@@ -1,7 +1,9 @@
 use uuid::Uuid;
+use chrono::{DateTime, Utc};
+use serde::{Serialize, Deserialize};
 
-#[derive(Deserialize, Serialize, FromRow)]
-pub struct User {
+#[derive(Deserialize, Serialize)]
+pub struct MessageChannel {
     pub id: Uuid,
     pub from_user: String,
     pub to_user: String,
@@ -9,3 +11,4 @@ pub struct User {
     pub created_at: DateTime<Utc>,
     pub updated_at: DateTime<Utc> 
 }
+
