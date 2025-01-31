@@ -16,3 +16,17 @@ pub async fn channel_exists(data: &web::Data<AppState>, message_channel: &Messag
     }
     Ok(false)
 }
+
+pub async fn create_message_channel(data: &web::Data<AppState>, message_channel: &MessageChannel) -> Result<(), Error> {
+    let query_result = sqlx::query_as!(
+        MessageChannel,
+        "Insert Into messages (from_user, to_user, message) VALUES ($1, $2, $3)",
+        message_channel.from_user,
+        message_channel.to_user,
+        message_channel.message
+    )
+    .execute(&data.db)
+    .await;
+
+    query_result.unwrap()
+}
