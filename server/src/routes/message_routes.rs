@@ -1,7 +1,11 @@
 use crate::{models::message_model::MessageChannel, repository};
 use crate::AppState;
-use actix_web::http::StatusCode;
+use crate::websocket;
 use actix_web::{get, post, patch, delete, web, Responder, HttpResponse};
+use tokio_tungstenite::accept_async;
+use tokio::net::TcpListener;
+use std::env;
+use dotenv::dotenv;
 
 #[post("/initiate")]
 pub async fn initiate_messaging(
@@ -9,6 +13,13 @@ pub async fn initiate_messaging(
     data: web::Data<AppState>,
 ) -> impl Responder {
     // Start a websocket between two users
+    let url = env::var("WEBSOCKET_URL").expect("Error getting _WEBSOCKET_URL");
+    let listener = TcpListener::bind(url).await.unwrap();
+
+    while let Ok((stream, _)) = listener.accept().await {
+        let ws_stream = accept_async(stream).await.unwrap();
+        tokio::spawn(websocket::handle_connection(ws_stream));
+    }
     
     // check if a message channle already exists
     let channel_exists = repository::message_repository::channel_exists(&data, &message_channel).await;
