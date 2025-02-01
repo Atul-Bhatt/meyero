@@ -6,11 +6,10 @@ mod repository;
 
 use actix_web::{web, App, HttpServer};
 use actix_web::middleware::Logger;
-use tokio_tungstenite::accept_async;
-use tokio::net::TcpListener;
+
+use sqlx::{Pool, Postgres, PgPool};
 use std::env;
 use dotenv::dotenv;
-use sqlx::{PgPool, Postgres, Pool};
 
 pub struct AppState {
     db: Pool<Postgres>,

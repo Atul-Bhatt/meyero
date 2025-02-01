@@ -13,6 +13,8 @@ pub async fn initiate_messaging(
     data: web::Data<AppState>,
 ) -> impl Responder {
     // Start a websocket between two users
+    dotenv().ok();
+
     let url = env::var("WEBSOCKET_URL").expect("Error getting _WEBSOCKET_URL");
     let listener = TcpListener::bind(url).await.unwrap();
 
