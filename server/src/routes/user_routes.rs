@@ -162,8 +162,7 @@ async fn search_user(
     data: web::Data<AppState>,
 ) -> impl Responder {
    // search all users where substring matches 
-   let result = repository::user_repository::search_username_substring(&data, &username.name);
-   
+   let result = repository::user_repository::search_username_substring(&data, &username.name).await; 
     match result {
         Ok(result) => {
             let response = serde_json::json!({"status": "success", "data": serde_json::json!({
