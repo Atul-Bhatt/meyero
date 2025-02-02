@@ -15,7 +15,7 @@ pub async fn initiate_messaging(
     // Start a websocket between two users
     dotenv().ok();
 
-    let url = env::var("WEBSOCKET_URL").expect("Error getting _WEBSOCKET_URL");
+    let url = env::var("WEBSOCKET_URL").expect("Error getting WEBSOCKET_URL");
     let listener = TcpListener::bind(url).await.unwrap();
 
     while let Ok((stream, _)) = listener.accept().await {
@@ -23,7 +23,7 @@ pub async fn initiate_messaging(
         tokio::spawn(websocket::handle_connection(ws_stream));
     }
     
-    // check if a message channle already exists
+    // check if a message channel already exists
     let channel_exists = repository::message_repository::channel_exists(&data, &message_channel).await;
     let exists: bool = channel_exists.unwrap();
     if !exists {
@@ -32,7 +32,7 @@ pub async fn initiate_messaging(
        match create_channel {
            Err(error) => {
                return HttpResponse::InternalServerError()
-                   .json(serde_json::json!({"status": "error", "message": error}))
+                   .json(serde_json::json!({"status": "error", "message": error.to_string()}))
            }
            _ => {}
        }
