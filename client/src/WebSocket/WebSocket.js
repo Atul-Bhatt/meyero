@@ -3,7 +3,7 @@ import {useEffect} from 'react';
 import Chat from "../Components/Chat/Chat";
 
 export const WebSocket = () => {
-	const WS_URL = "ws://localhost:8080"
+	const WS_URL = process.env.WEBSOCKET_URL
 	const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket(
 		WS_URL,
 		{
