@@ -2,6 +2,7 @@ use crate::models::message_model::MessageChannel;
 use std::io::Error;
 use crate::AppState;
 use actix_web::web;
+use anyhow::Result;
 
 pub async fn channel_exists(data: &web::Data<AppState>, message_channel: &MessageChannel) -> Result<bool, Error> {
     let query_result = sqlx::query_scalar("Select count(*) From messages Where from_user = $1 And to_user = $2")
@@ -17,16 +18,16 @@ pub async fn channel_exists(data: &web::Data<AppState>, message_channel: &Messag
     Ok(false)
 }
 
-pub async fn create_message_channel(data: &web::Data<AppState>, message_channel: &MessageChannel) -> Result<(), Error> {
-    let query_result = sqlx::query_as!(
+pub async fn create_message_channel(data: &web::Data<AppState>, message_channel: &MessageChannel) -> Result<()> {
+    let _ = sqlx::query_as!(
         MessageChannel,
-        "Insert Into messages (from_user, to_user, message) VALUES ($1, $2, $3)",
+        "Insert Into message (from_user, to_user, message) VALUES ($1, $2, $3)",
         message_channel.from_user,
         message_channel.to_user,
         message_channel.message
     )
     .execute(&data.db)
-    .await;
+    .await?;
 
-    query_result.unwrap()
+    Ok(())
 }
