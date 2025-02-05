@@ -43,8 +43,9 @@ async fn edit_user(
         return HttpResponse::NotFound()
             .json(serde_json::json!({"status": "fail","message": message}));
     }
+    let db_user= result.unwrap();
 
-    let result = repository::user_repository::update_user(&data, body).await;
+    let result = repository::user_repository::update_user(&data, body, db_user).await;
     match result {
         Ok(user) => {
             let user_response = serde_json::json!({"status": "success","data": serde_json::json!({

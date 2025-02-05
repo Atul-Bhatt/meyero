@@ -3,51 +3,57 @@ use std::io::Error;
 use crate::AppState;
 use actix_web::web;
 use uuid::Uuid;
+use anyhow::Result;
+use chrono::Utc;
 
-pub async fn get_all_users(data: &web::Data<AppState>) -> Result<Vec<User>, Error> {
+pub async fn get_all_users(data: &web::Data<AppState>) -> Result<Vec<User>> {
     let query_result = sqlx::query_as!(
         User,
         "Select * From users"
     )
-    .fetch_all(data.db)
-    .await;
+    .fetch_all(&data.db)
+    .await?;
 
-    query_result.unwrap()
+    // if query_result.is_err() {
+    //     let message = String::from("Error Fetching Users");
+    //     return Error(message)
+    // }
+    Ok(query_result)
 }
 
-pub async fn get_user_by_id(data: &web::Data<AppState>, user_id: &Uuid) -> Result<User, Error> {
+pub async fn get_user_by_id(data: &web::Data<AppState>, user_id: &Uuid) -> Result<User> {
     let query_result = sqlx::query_as!(User, "SELECT * FROM users WHERE id = $1", user_id)
-        .fetch_one(data.db)
-        .await;
+        .fetch_one(&data.db)
+        .await?;
 
-    return query_result.unwrap
+    Ok(query_result)
 }
 
-pub async fn get_user_by_username(data: &web::Data<AppState>, username: &String) -> Result<User, Error> {
+pub async fn get_user_by_username(data: &web::Data<AppState>, username: &String) -> Result<User> {
     let query_result = sqlx::query_as!(User, "SELECT * FROM users WHERE username = $1", username)
         .fetch_one(&data.db)
-        .await;
+        .await?;
     
-    query_result.unwrap()
+    Ok(query_result)
 }
 
-pub async fn update_user(data: &web::Data<AppState>, body: web::Json<UpdateUser>) -> Result<User, Error> {
+pub async fn update_user(data: &web::Data<AppState>, body: web::Json<UpdateUser>, user: User) -> Result<User> {
     let query_result = sqlx::query_as!(
         User,
         "UPDATE users SET username = $1, email = $2, name = $3, updated_at = $4 WHERE id = $5 RETURNING *",
         body.username.to_owned().unwrap_or(user.username),
         body.email.to_owned().unwrap_or(user.email),
         body.name.to_owned().unwrap_or(user.name),
-        now,
-        user_id 
+        Utc::now(),
+        user.id 
     )
     .fetch_one(&data.db)
-    .await;
+    .await?;
     
-    query_result.unwrap()
+    Ok(query_result)
 }
 
-pub async fn delete_user(data: &web::Data<AppState>, user_id: &Uuid) -> i32 {
+pub async fn delete_user(data: &web::Data<AppState>, user_id: &Uuid) -> u64 {
     let rows_affected = sqlx::query!("DELETE FROM users  WHERE id = $1", user_id)
         .execute(&data.db)
         .await
@@ -56,7 +62,7 @@ pub async fn delete_user(data: &web::Data<AppState>, user_id: &Uuid) -> i32 {
     rows_affected
 }
 
-pub async fn add_user(data: &web::Data<AppState>, user: &User, hashed_pass: String) -> Result<User, Error> {
+pub async fn add_user(data: &web::Data<AppState>, user: &User, hashed_pass: String) -> Result<User> {
     let query_result = sqlx::query_as!(
         User,
         "Insert Into users (username, email, name, password) VALUES ($1, $2, $3, $4) Returning *",
@@ -66,28 +72,28 @@ pub async fn add_user(data: &web::Data<AppState>, user: &User, hashed_pass: Stri
         hashed_pass, 
     )
     .fetch_one(&data.db)
-    .await;
+    .await?;
 
-    query_result.unwrap()
+    Ok(query_result)
 }
 
-pub async fn add_token(data: &web::Data<AppState>, user_id: &Uuid, token: &String) -> Result<(), Error> {
-    let query_result = sqlx::query_as!(
+pub async fn add_token(data: &web::Data<AppState>, user_id: &Uuid, token: &String) -> Result<()> {
+    let _ = sqlx::query_as!(
         User,
         "Insert Into token (user_id, token) VALUES ($1, $2)",
         user_id,
         token
     )
     .execute(&data.db)
-    .await;
+    .await?;
 
-    query_result.unwrap()
+    Ok(())
 } 
 
-pub async fn search_username_substring(data: &web::Data<AppState>, username_substring: &String) -> Result<Vec<User>, Error> {
-    let query_result = sqlx::query_as!(User, "SELECT * FROM users WHERE username ilike %$1%", username_substring)
+pub async fn search_username_substring(data: &web::Data<AppState>, username_substring: &String) -> Result<Vec<User>> {
+    let query_result = sqlx::query_as!(User, "SELECT * FROM users WHERE username ilike $1", username_substring)
         .fetch_all(&data.db)
         .await;
     
-    query_result.unwrap()
+    Ok(query_result.unwrap())
 }
