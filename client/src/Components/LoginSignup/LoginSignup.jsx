@@ -23,12 +23,14 @@ class LoginSignup extends React.Component {
 
     handleSubmit = e => {
         axios
-            .post("localhost://8080", this.state)
+            .post("localhost://8081/user/login", this.state)
             .then(reponse => {
                 console.log(reponse);
+                alert('login success')
             })
             .catch(error => {
                 console.log(error);
+                alert('login failed')
             });
 
             this.setState({
@@ -66,13 +68,13 @@ class LoginSignup extends React.Component {
                 <div className="input">
                     <input type="text"
                         placeholder="Username"
-                        value={this.state.username}
+                        //value={this.state.username}
                         onChange={this.handleOnChange}/>
                 </div>
                 <div className="input">
                     <input type="password"
                         placeholder="Password"
-                        value={this.state.password}
+                        //value={this.state.password}
                         onChange={this.handleOnChange}/>
                 </div>
                 <div className="submit-container">
