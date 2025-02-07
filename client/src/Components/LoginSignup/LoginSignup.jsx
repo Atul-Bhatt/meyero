@@ -23,7 +23,11 @@ class LoginSignup extends React.Component {
 
     handleSubmit = e => {
         axios
-            .post("localhost://8081/user/login", this.state)
+            .post("http://localhost:8081/user/login", {
+                id: "9eb564d2-82a5-40f3-8fd8-9a0f52676c49", // Not actually used
+                username: this.state.username,
+                password: this.state.password
+            })
             .then(reponse => {
                 console.log(reponse);
                 alert('login success')

@@ -1,5 +1,5 @@
 use crate::models::user_model::{User, UpdateUser, UserLogin, SearchUser};
-use argon2::{Argon2, PasswordHasher, PasswordVerifier, password_hash::SaltString};
+use argon2::{Argon2, PasswordHasher, PasswordVerifier, password_hash::SaltString, PasswordHash};
 use rand_core::OsRng;
 use crate::AppState;
 use crate::service;
@@ -90,11 +90,9 @@ async fn login(
     }
 
     let db_user = result.unwrap();
+    let hash = PasswordHash::new(&db_user.password).unwrap();
 
-    let salt = SaltString::generate(&mut OsRng);
-    let hash = Argon2::default().hash_password(user.password.as_bytes(), &salt).unwrap();
-
-    let compare_pass = Argon2::default().verify_password(db_user.password.as_bytes(), &hash);
+    let compare_pass = Argon2::default().verify_password(&user.password.as_bytes(), &hash);
 
     match compare_pass {
         Ok(_) => {
