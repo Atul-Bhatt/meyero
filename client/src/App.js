@@ -3,6 +3,7 @@ import './App.css';
 import LoginSignup from './Components/LoginSignup/LoginSignup';
 import WebSocket from './WebSocket/WebSocket'
 import Home from './Pages/Home/Home'
+import NotFound from './Pages/NotFound/NotFound'
 import {Routes, Route} from 'react-router-dom'
 
 function App() {
@@ -12,6 +13,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<LoginSignup />} />
         <Route path="/websocket" element={<WebSocket />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </>
     // <div className="App">
