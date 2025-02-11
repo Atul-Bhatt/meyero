@@ -77,11 +77,11 @@ pub async fn add_user(data: &web::Data<AppState>, user: &User, hashed_pass: Stri
     Ok(query_result)
 }
 
-pub async fn add_token(data: &web::Data<AppState>, user_id: &Uuid, token: &String) -> Result<()> {
+pub async fn add_token(data: &web::Data<AppState>, session_id: &Uuid, token: &String) -> Result<()> {
     let _ = sqlx::query_as!(
         User,
-        "Insert Into token (user_id, token) VALUES ($1, $2)",
-        user_id,
+        "Insert Into token (session_id, token) VALUES ($1, $2)",
+        session_id,
         token
     )
     .execute(&data.db)

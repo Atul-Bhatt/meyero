@@ -96,6 +96,8 @@ async fn login(
 
     match compare_pass {
         Ok(_) => {
+            // create session
+
             // generate jwt token
             let token = service::user_service::generate_jwt_token(db_user.id);
             // add jwt token to db

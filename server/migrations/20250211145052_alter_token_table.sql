@@ -1,5 +1,5 @@
 Alter Table if exists token
-Drop Column user_id;
+Drop Column if exists user_id;
 
 Alter Table if exists token
-Add Column session_id not null references session_table;
+Add Column if not exists session_id UUID references session_table;
