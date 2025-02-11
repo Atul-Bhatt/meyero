@@ -22,26 +22,49 @@ class LoginSignup extends React.Component {
     }
 
     handleSubmit = e => {
-        axios
-            .post("http://localhost:8081/user/login", {
-                id: "9eb564d2-82a5-40f3-8fd8-9a0f52676c49", // Not actually used
-                username: this.state.username,
-                password: this.state.password
-            })
-            .then(reponse => {
-                console.log(reponse);
-                alert('login success')
-            })
-            .catch(error => {
-                console.log(error);
-                alert('login failed')
-            });
+        e.preventDefault();
+        // axios.post("http://localhost:8081/user/login", {
+        //     id: "9eb564d2-82a5-40f3-8fd8-9a0f52676c49", // Not actually used
+        //     username: this.state.username,
+        //     password: this.state.password
+        // })
+        // .then(reponse => {
+        //     console.log(reponse);
+        //     alert('login success')
+        //     navigate('/')
+        // })
+        // .catch(error => {
+        //     console.log(error);
+        //     alert('login failed')
+        // });
 
-            this.setState({
+        // this.setState({
+        //     username: "",
+        //     password: ""
+        // });
+
+        try {
+            const response = axios.post(
+                "http://localhost:8081/user/login",
+                JSON.stringify(this.state),
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Access-Control-Allow-Origin": "*"
+                    },
+                    withCredentials: true,
+                }
+            );
+            console.log(response?.data?.token);
+
+            this.setState ({
                 username: "",
                 password: ""
             });
-    }
+        } catch (err) {
+            console.log("Login Failed")
+        }
+    };
 
     render() {
         return (
