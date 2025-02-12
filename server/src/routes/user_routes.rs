@@ -6,7 +6,7 @@ use crate::service;
 use crate::repository;
 use serde_json;
 
-use actix_web::{get, post, patch, delete, web, Responder, HttpResponse};
+use actix_web::{get, post, patch, delete, http, web, Responder, HttpResponse, HttpRequest};
 
 #[get("/list")]
 async fn get_all_users(
@@ -79,9 +79,14 @@ async fn delete_user(
 
 #[post("/login")]
 async fn login(
+   request: HttpRequest,
    user: web::Json<UserLogin>,
    data: web::Data<AppState>, 
 ) -> impl Responder {
+
+    // get User-Agent from request
+    let user_agent = request.headers().get("user-agent").unwrap().to_str().unwrap();
+
     let result = repository::user_repository::get_user_by_username(&data, &user.username).await;
     if result.is_err() {
         let message = format!("User with username: {} not found", user.username);
@@ -97,11 +102,21 @@ async fn login(
     match compare_pass {
         Ok(_) => {
             // create session
+            let session_result = repository::user_repository::create_session(&data, &db_user.id, &user_agent.to_string()).await;
+            match session_result {
+                Err(err) => {
+                    let message = format!("Error: {:?}", err);
+                    return HttpResponse::InternalServerError()
+                        .json(serde_json::json!({"status": "error", "message": message}));
+                }
+                _ => ()
+            }
+            let session_id = session_result.unwrap();
 
             // generate jwt token
             let token = service::user_service::generate_jwt_token(db_user.id);
             // add jwt token to db
-            let result = repository::user_repository::add_token(&data, &db_user.id, &token).await;
+            let result = repository::user_repository::add_token(&data, &session_id, &token).await;
             match result {
                 Err(err) => {
                     let message = format!("Error: {:?}", err);

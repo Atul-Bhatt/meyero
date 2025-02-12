@@ -1,4 +1,4 @@
-use crate::models::user_model::{User, UpdateUser};
+use crate::models::user_model::{User, UpdateUser, Session};
 use std::io::Error;
 use crate::AppState;
 use actix_web::web;
@@ -79,7 +79,7 @@ pub async fn add_user(data: &web::Data<AppState>, user: &User, hashed_pass: Stri
 
 pub async fn add_token(data: &web::Data<AppState>, session_id: &Uuid, token: &String) -> Result<()> {
     let _ = sqlx::query_as!(
-        User,
+        Token,
         "Insert Into token (session_id, token) VALUES ($1, $2)",
         session_id,
         token
@@ -88,6 +88,18 @@ pub async fn add_token(data: &web::Data<AppState>, session_id: &Uuid, token: &St
     .await?;
 
     Ok(())
+} 
+
+pub async fn create_session(data: &web::Data<AppState>, user_id: &Uuid, user_agent: &String) -> Result<Uuid> {
+    let query_result = sqlx::query!(
+        "Insert Into session_table (user_id, user_agent) VALUES ($1, $2) returning id",
+        user_id,
+        user_agent 
+    )
+    .fetch_one(&data.db)
+    .await?;
+
+    Ok(query_result.id)
 } 
 
 pub async fn search_username_substring(data: &web::Data<AppState>, username_substring: &String) -> Result<Vec<User>> {

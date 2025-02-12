@@ -31,3 +31,22 @@ pub struct UserLogin {
 pub struct SearchUser {
     pub name: String,
 }
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct Session {
+    pub id: Uuid,
+    pub user_id: Uuid,
+    pub user_agent: String,
+    pub expired_at: DateTime<Utc>,
+    pub created_at: DateTime<Utc>
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct Token {
+    pub id: Uuid,
+    pub token: String, 
+    pub session_id: Uuid,
+    pub expires_at: DateTime<Utc>,
+    pub created_at: DateTime<Utc>,
+    pub revoked: DateTime<Utc>
+}
