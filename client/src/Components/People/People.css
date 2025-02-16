@@ -1,0 +1,13 @@
+.people__main {
+    display: flex;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 10px;
+    margin: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.people__main > h3 {
+    margin-left: 10px;
+    font-size: 15px;
+}
