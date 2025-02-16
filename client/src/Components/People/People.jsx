@@ -1,9 +1,9 @@
 import './People.css';
 
-const People = (id, name) => {
+const People = ({name}) => {
     return (
         <div>
-            <h3>name</h3>
+            <h3>{name}</h3>
         </div>
     );
 }

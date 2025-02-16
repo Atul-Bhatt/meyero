@@ -23,7 +23,7 @@ async fn get_all_users(
     let json_response = serde_json::json!({
         "status": "success",
         "results": users.len(),
-        "uses": users
+        "user": users
     });
     HttpResponse::Ok().json(json_response)
 }
