@@ -5,7 +5,7 @@ import apple_logo from '../Assets/apple_logo.png'
 import login_background from '../Assets/login_background.jpg'
 import axios from 'axios'
 import React from 'react'
-
+import { Link } from 'react-router-dom'
 class LoginSignup extends React.Component {
     constructor(props) {
         super(props);
@@ -66,6 +66,10 @@ class LoginSignup extends React.Component {
         }
     };
 
+    navigateToHome = e => {
+        window.location("http://localhost:3000/")
+    }
+
     render() {
         return (
             <div className="main-container">
@@ -91,7 +95,7 @@ class LoginSignup extends React.Component {
                 <p><span>OR</span></p>
             </div> 
             <div className="inputs">
-                <form onSubmit={this.handleSubmit}>
+                <form onSubmit={this.navigteToHome}>
                 <div className="input">
                     <input type="text"
                         placeholder="Username"
