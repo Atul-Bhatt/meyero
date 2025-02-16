@@ -6,6 +6,7 @@ mod repository;
 
 use actix_web::{web, App, HttpServer};
 use actix_web::middleware::Logger;
+use actix_cors;
 
 use sqlx::{Pool, Postgres, PgPool};
 use std::env;
@@ -29,6 +30,13 @@ async fn main() {
         .configure(routes::user_routes::config)
         .configure(routes::message_routes::config)
         .wrap(Logger::default())
+        .wrap(
+            actix_cors::Cors::default()
+                .allowed_origin("http://localhost:3000")
+                .allowed_methods(vec!["GET", "POST"])
+                .allowed_headers(vec![actix_web::http::header::AUTHORIZATION, actix_web::http::header::ACCEPT])
+                .max_age(3600),
+        )
     })
     .bind("localhost:8081").unwrap()
     .run()
