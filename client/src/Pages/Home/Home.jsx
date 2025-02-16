@@ -1,8 +1,15 @@
 import './Home.css';
+import Sidebar from '../../Components/Sidebar/Sidebar'
 
 const Home = () => {
 	return (
-        <h1>This is the Home page</h1>
+		<div className='main__div'>
+			<div className='left__sidebar'>
+				<Sidebar/>
+			</div>
+			<div className='right__body'>
+			</div>
+		</div>
 	);
 };
 
