@@ -28,11 +28,6 @@ pub struct UserLogin {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
-pub struct SearchUser {
-    pub name: String,
-}
-
-#[derive(Serialize, Deserialize, Debug)]
 pub struct Session {
     pub id: Uuid,
     pub user_id: Uuid,
@@ -49,4 +44,9 @@ pub struct Token {
     pub expires_at: DateTime<Utc>,
     pub created_at: DateTime<Utc>,
     pub revoked: DateTime<Utc>
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct SearchUserParams {
+    pub username: String
 }

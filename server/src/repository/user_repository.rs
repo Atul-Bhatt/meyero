@@ -103,7 +103,7 @@ pub async fn create_session(data: &web::Data<AppState>, user_id: &Uuid, user_age
 } 
 
 pub async fn search_username_substring(data: &web::Data<AppState>, username_substring: &String) -> Result<Vec<User>> {
-    let query_result = sqlx::query_as!(User, "SELECT * FROM users WHERE username ilike $1", username_substring)
+    let query_result = sqlx::query_as!(User, "SELECT * FROM users WHERE username ilike $1", format!("%{}%", username_substring))
         .fetch_all(&data.db)
         .await;
     

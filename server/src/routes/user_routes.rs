@@ -1,4 +1,4 @@
-use crate::models::user_model::{User, UpdateUser, UserLogin, SearchUser};
+use crate::models::user_model::{User, UpdateUser, UserLogin, SearchUserParams};
 use argon2::{Argon2, PasswordHasher, PasswordVerifier, password_hash::SaltString, PasswordHash};
 use rand_core::OsRng;
 use crate::AppState;
@@ -174,11 +174,12 @@ async fn signup(
 
 #[get("/search")]
 async fn search_user(
-    username: web::Json<SearchUser>,
+    req: HttpRequest, 
     data: web::Data<AppState>,
 ) -> impl Responder {
    // search all users where substring matches 
-   let result = repository::user_repository::search_username_substring(&data, &username.name).await; 
+   let query_params = web::Query::<SearchUserParams>::from_query(req.query_string()).unwrap();
+   let result = repository::user_repository::search_username_substring(&data, &query_params.username).await; 
     match result {
         Ok(result) => {
             let response = serde_json::json!({"status": "success", "data": serde_json::json!({
@@ -199,7 +200,8 @@ pub fn config(conf: &mut web::ServiceConfig) {
         .service(edit_user)
         .service(delete_user)
         .service(login)
-        .service(signup);
+        .service(signup)
+        .service(search_user);
 
     conf.service(scope);
 }
