@@ -3,6 +3,7 @@ mod routes;
 mod models;
 mod service;
 mod repository;
+mod auth;
 
 use actix_web::{web, App, HttpServer};
 use actix_web::middleware::Logger;
