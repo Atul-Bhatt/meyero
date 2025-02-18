@@ -2,7 +2,7 @@ use crate::models::user_model::{User, UpdateUser, UserLogin, SearchUserParams};
 use argon2::{Argon2, PasswordHasher, PasswordVerifier, password_hash::SaltString, PasswordHash};
 use rand_core::OsRng;
 use crate::AppState;
-use crate::service;
+use crate::auth;
 use crate::repository;
 use serde_json;
 
@@ -114,7 +114,7 @@ async fn login(
             let session_id = session_result.unwrap();
 
             // generate jwt token
-            let token = service::user_service::generate_jwt_token(db_user.id);
+            let token = auth::generate_jwt_token(db_user.id);
             // add jwt token to db
             let result = repository::user_repository::add_token(&data, &session_id, &token).await;
             match result {

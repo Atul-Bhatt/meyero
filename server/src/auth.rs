@@ -1,6 +1,9 @@
+use jsonwebtoken::{encode, decode, Header, EncodingKey, DecodingKey, Algorithm, Validation};
 use actix_web::{http::header, FromRequest, HttpRequest, dev};
 use serde::{Deserialize, Serialize};
 use regex::Regex;
+use serde_json::json;
+use uuid::Uuid;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct AuthUser {
@@ -43,4 +46,27 @@ impl FromRequest for AuthUser {
             },
         }))
     }
+}
+
+
+pub fn generate_jwt_token(user_id: Uuid) -> String {
+    let current_time = chrono::Utc::now().timestamp();
+    let expiration_time = current_time + 86400; // one day
+    let claims = json!({
+        "user_id": user_id,
+        "sub": "public_key",
+        "exp": expiration_time
+    });
+
+    encode(&Header::new(Algorithm::HS256), &claims, &EncodingKey::from_secret("jwt_secret".as_ref())).unwrap()
+}
+
+pub fn decode_token(token: &str) -> Result<Claims, Error> {
+    decode::<Claims>(
+        token,
+        &DecodingKey::from_secret("jwt_secret".as_ref()).unwrap(),
+        &Validation::new(Algorithm::HS256),
+    )
+    .map(|data| data.claims)
+    .map_err(|e| Error(e))
 }
