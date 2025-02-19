@@ -175,10 +175,16 @@ async fn signup(
 
 #[get("/search")]
 async fn search_user(
-    _auth: AuthUser,
+    auth: AuthUser,
     req: HttpRequest, 
     data: web::Data<AppState>,
 ) -> impl Responder {
+    // check token
+    if auth.token.is_none() {
+        return HttpResponse::BadRequest()
+            .json(serde_json::json!({"status": "error", "message": "invalid or missing token"}))
+    }
+
     // search all users where substring matches 
     let query_params = web::Query::<SearchUserParams>::from_query(req.query_string());
     if query_params.is_err() {
