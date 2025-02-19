@@ -1,7 +1,6 @@
 mod websocket;
 mod routes;
 mod models;
-mod service;
 mod repository;
 mod auth;
 

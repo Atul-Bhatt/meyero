@@ -4,6 +4,7 @@ use rand_core::OsRng;
 use crate::AppState;
 use crate::auth;
 use crate::repository;
+use crate::auth::AuthUser;
 use serde_json;
 
 use actix_web::{get, post, patch, delete, http, web, Responder, HttpResponse, HttpRequest};
@@ -174,6 +175,7 @@ async fn signup(
 
 #[get("/search")]
 async fn search_user(
+    _auth: AuthUser,
     req: HttpRequest, 
     data: web::Data<AppState>,
 ) -> impl Responder {

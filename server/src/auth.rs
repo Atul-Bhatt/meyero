@@ -41,7 +41,7 @@ impl FromRequest for AuthUser {
         futures::future::ready(Ok(match token {
             None => AuthUser {token: None},
             Some(token) => match decode_token(token) {
-                Ok(decoded) => AuthUser {token: decoded},
+                Ok(decoded) => AuthUser {token: Some(decoded)},
                 Err(_) => AuthUser {token: None},
             },
         }))
@@ -61,12 +61,12 @@ pub fn generate_jwt_token(user_id: Uuid) -> String {
     encode(&Header::new(Algorithm::HS256), &claims, &EncodingKey::from_secret("jwt_secret".as_ref())).unwrap()
 }
 
-pub fn decode_token(token: &str) -> Result<Claims, Error> {
+pub fn decode_token(token: &str) -> Result<Claims, anyhow::Error> {
     decode::<Claims>(
         token,
-        &DecodingKey::from_secret("jwt_secret".as_ref()).unwrap(),
+        &DecodingKey::from_secret("jwt_secret".as_ref()),
         &Validation::new(Algorithm::HS256),
     )
     .map(|data| data.claims)
-    .map_err(|e| Error(e))
+    .map_err(|e| anyhow::Error::new(e))
 }
