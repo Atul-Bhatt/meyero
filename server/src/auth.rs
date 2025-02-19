@@ -4,6 +4,7 @@ use serde::{Deserialize, Serialize};
 use regex::Regex;
 use serde_json::json;
 use uuid::Uuid;
+use std::env;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct AuthUser {
@@ -58,13 +59,13 @@ pub fn generate_jwt_token(user_id: Uuid) -> String {
         "exp": expiration_time
     });
 
-    encode(&Header::new(Algorithm::HS256), &claims, &EncodingKey::from_secret("jwt_secret".as_ref())).unwrap()
+    encode(&Header::new(Algorithm::HS256), &claims, &EncodingKey::from_secret(&env::var("JWT_SECRET").unwrap().as_ref())).unwrap()
 }
 
 pub fn decode_token(token: &str) -> Result<Claims, anyhow::Error> {
     decode::<Claims>(
         token,
-        &DecodingKey::from_secret("jwt_secret".as_ref()),
+        &DecodingKey::from_secret(&env::var("JWT_SECRET").unwrap().as_ref()),
         &Validation::new(Algorithm::HS256),
     )
     .map(|data| data.claims)
