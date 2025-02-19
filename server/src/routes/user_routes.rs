@@ -11,8 +11,15 @@ use actix_web::{get, post, patch, delete, http, web, Responder, HttpResponse, Ht
 
 #[get("/list")]
 async fn get_all_users(
+    auth: AuthUser,
     data: web::Data<AppState>,
 ) -> impl Responder {
+    // check token
+    if auth.token.is_none() {
+        return HttpResponse::BadRequest()
+            .json(serde_json::json!({"status": "error", "message": "invalid or missing token"}))
+    }
+
     let result =  repository::user_repository::get_all_users(&data).await;
     if result.is_err() {
         let message = "Error occured while fetching all users";
@@ -32,10 +39,17 @@ async fn get_all_users(
 
 #[patch("/{id}")]
 async fn edit_user(
+    auth: AuthUser,
     path: web::Path<uuid::Uuid>,
     body: web::Json<UpdateUser>,
     data: web::Data<AppState>,
 ) -> impl Responder {
+    // check token
+    if auth.token.is_none() {
+        return HttpResponse::BadRequest()
+            .json(serde_json::json!({"status": "error", "message": "invalid or missing token"}))
+    }
+    
     let user_id = path.into_inner();
 
     let result = repository::user_repository::get_user_by_id(&data, &user_id).await;
@@ -65,9 +79,16 @@ async fn edit_user(
 
 #[delete("/{id}")]
 async fn delete_user(
+    auth: AuthUser,
     path: web::Path<uuid::Uuid>,
     data: web::Data<AppState>,
 ) -> impl Responder {
+    // check token
+    if auth.token.is_none() {
+        return HttpResponse::BadRequest()
+            .json(serde_json::json!({"status": "error", "message": "invalid or missing token"}))
+    }
+
     let user_id = path.into_inner();
     let rows_affected = repository::user_repository::delete_user(&data, &user_id).await;
     if rows_affected == 0 {
