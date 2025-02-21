@@ -5,11 +5,13 @@ import apple_logo from '../Assets/apple_logo.png';
 import login_background from '../Assets/login_background.jpg';
 import axios from 'axios';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom'
 
 const LoginSignup = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const url = 'http://localhost:8081/user/login';
+    const navigate = useNavigate();
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -21,6 +23,7 @@ const LoginSignup = () => {
             });
 
             console.log(response.data);
+            navigate('/')
         } catch(error) {
             console.log(error);
         }
