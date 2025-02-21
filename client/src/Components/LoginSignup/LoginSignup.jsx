@@ -1,4 +1,5 @@
 import './LoginSignup.css'
+import { API_ROUTES, APP_ROUTES } from '../../utils/constants'
 
 import google_logo from '../Assets/google_logo.png';
 import apple_logo from '../Assets/apple_logo.png';
@@ -10,20 +11,19 @@ import { useNavigate } from 'react-router-dom'
 const LoginSignup = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const url = 'http://localhost:8081/user/login';
     const navigate = useNavigate();
 
     const handleSubmit = (event) => {
         event.preventDefault();
 
         try {
-            const response = axios.post(url, {
+            const response = axios.post(API_ROUTES.LOG_IN, {
                 username,
                 password
             });
 
             console.log(response.data);
-            navigate('/')
+            navigate(APP_ROUTES.HOME)
         } catch(error) {
             console.log(error);
         }
