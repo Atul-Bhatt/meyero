@@ -1,5 +1,5 @@
-import logo from './logo.svg';
 import './App.css';
+import { APP_ROUTES } from './utils/constants'
 import LoginSignup from './Components/LoginSignup/LoginSignup';
 import WebSocket from './WebSocket/WebSocket'
 import Home from './Pages/Home/Home'
@@ -10,9 +10,9 @@ function App() {
   return (
     <>
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<LoginSignup />} />
-        <Route path="/websocket" element={<WebSocket />} />
+        <Route path={APP_ROUTES.HOME} element={<Home />} />
+        <Route path={APP_ROUTES.LOG_IN} element={<LoginSignup />} />
+        <Route path={APP_ROUTES.WEBSOCKET} element={<WebSocket />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </>
