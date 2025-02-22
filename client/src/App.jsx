@@ -1,10 +1,10 @@
-import './App.css';
+import './App.css'
 import { APP_ROUTES } from './utils/constants'
-import LoginSignup from './Components/LoginSignup/LoginSignup';
+import LoginSignup from './Components/LoginSignup/LoginSignup'
 import WebSocket from './WebSocket/WebSocket'
 import Home from './Pages/Home/Home'
 import NotFound from './Pages/NotFound/NotFound'
-import {Routes, Route} from 'react-router-dom'
+import { Routes, Route } from 'react-router-dom'
 
 function App() {
   return (
@@ -13,16 +13,16 @@ function App() {
         <Route path={APP_ROUTES.HOME} element={<Home />} />
         <Route path={APP_ROUTES.LOG_IN} element={<LoginSignup />} />
         <Route path={APP_ROUTES.WEBSOCKET} element={<WebSocket />} />
-        <Route path="*" element={<NotFound />} />
+        <Route path='*' element={<NotFound />} />
       </Routes>
     </>
     // <div className="App">
     //   <header className="App-header">
-    //     <LoginSignup /> 
+    //     <LoginSignup />
     //     {/* <WebSocket/> */}
     //   </header>
     // </div>
-  );
+  )
 }
 
-export default App;
+export default App
