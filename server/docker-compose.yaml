@@ -11,6 +11,14 @@ services:
       - "5432:5432"
     volumes:
       - db-data:/var/lib/postgresql/data
+  server:
+    build: .
+    ports:
+      - "8081:8081"
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+    depends_on:
+      - db
 
 volumes: 
   db-data:
