@@ -34,11 +34,15 @@ async fn main() {
             actix_cors::Cors::default()
                 .allowed_origin("http://localhost:3000")
                 .allowed_methods(vec!["GET", "POST"])
-                .allowed_headers(vec![actix_web::http::header::AUTHORIZATION, actix_web::http::header::ACCEPT, actix_web::http::header::CONTENT_TYPE])
+                .allowed_headers(vec![
+                    actix_web::http::header::AUTHORIZATION,
+                    actix_web::http::header::ACCEPT,
+                    actix_web::http::header::CONTENT_TYPE
+                    ])
                 .max_age(3600),
         )
     })
-    .bind("localhost:8081").unwrap()
+    .bind("0.0.0.0:8081").unwrap()
     .run()
     .await;
 }

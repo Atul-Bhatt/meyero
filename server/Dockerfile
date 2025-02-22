@@ -5,4 +5,4 @@ COPY . .
 ARG SQLX_OFFLINE=true
 ENV SQLX_OFFLINE=true  
 RUN cargo build --release
-ENTRYPOINT [./target/release/server]
+ENTRYPOINT ["./target/release/server"]

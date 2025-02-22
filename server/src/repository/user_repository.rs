@@ -1,5 +1,4 @@
-use crate::models::user_model::{User, UpdateUser, Session};
-use std::io::Error;
+use crate::models::user_model::{User, UpdateUser};
 use crate::AppState;
 use actix_web::web;
 use uuid::Uuid;

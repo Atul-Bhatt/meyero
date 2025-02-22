@@ -1,0 +1,16 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "Insert Into message (from_user, to_user, message) VALUES ($1, $2, $3)",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Uuid",
+        "Text"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "ad9ffd15714e5fe46a8a6302b924e5ad813c2bd5806f931496e9c3529bc7804a"
+}

@@ -1,7 +1,7 @@
 use crate::{models::message_model::MessageChannel, repository};
 use crate::AppState;
 use crate::websocket;
-use actix_web::{get, post, patch, delete, web, Responder, HttpResponse};
+use actix_web::{post, web, Responder, HttpResponse};
 use tokio_tungstenite::accept_async;
 use tokio::net::TcpListener;
 use std::env;

@@ -7,7 +7,7 @@ use crate::repository;
 use crate::auth::AuthUser;
 use serde_json;
 
-use actix_web::{get, post, patch, delete, http, web, Responder, HttpResponse, HttpRequest};
+use actix_web::{get, post, patch, delete, web, Responder, HttpResponse, HttpRequest};
 
 #[get("/list")]
 async fn get_all_users(
