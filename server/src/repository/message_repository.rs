@@ -31,3 +31,17 @@ pub async fn create_message_channel(data: &web::Data<AppState>, message_channel:
 
     Ok(())
 }
+
+pub async fn update_message(data: &web::Data<AppState>, message_channel: &MessageChannel, msg: String) {
+    let _ = sqlx::query_as!(
+        MessageChannel,
+        "Update message message = $1 where from_user =  $2 and to_user =  $3)",
+        message_channel.message,
+        message_channel.from_user,
+        message_channel.to_user
+    )
+    .execute(&data.db)
+    .await?;
+
+    Ok(())
+}

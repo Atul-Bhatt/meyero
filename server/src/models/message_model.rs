@@ -2,7 +2,7 @@ use uuid::Uuid;
 use chrono::{DateTime, Utc};
 use serde::{Serialize, Deserialize};
 
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Serialize, Clone)]
 pub struct MessageChannel {
     pub id: Uuid,
     pub from_user: Uuid,

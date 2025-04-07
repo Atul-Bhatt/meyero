@@ -12,17 +12,6 @@ pub async fn initiate_messaging(
     message_channel: web::Json<MessageChannel>,
     data: web::Data<AppState>,
 ) -> impl Responder {
-    // Start a websocket between two users
-    dotenv().ok();
-
-    let url = env::var("WEBSOCKET_URL").expect("Error getting WEBSOCKET_URL");
-    let listener = TcpListener::bind(url).await.unwrap();
-
-    while let Ok((stream, _)) = listener.accept().await {
-        let ws_stream = accept_async(stream).await.unwrap();
-        tokio::spawn(websocket::handle_connection(ws_stream));
-    }
-    
     // check if a message channel already exists
     let channel_exists = repository::message_repository::channel_exists(&data, &message_channel).await;
     let exists: bool = channel_exists.unwrap();
@@ -36,6 +25,15 @@ pub async fn initiate_messaging(
            }
            _ => {}
        }
+    }
+
+    // start a websocket connection
+    let url = env::var("WEBSOCKET_URL").expect("Error getting WEBSOCKET_URL");
+    let listener = TcpListener::bind(url).await.unwrap();
+
+    if let Ok((stream, _)) = listener.accept().await {
+        let ws_stream = accept_async(stream).await.unwrap();
+        tokio::spawn(websocket::handle_connection(ws_stream, message_channel.clone(), data.clone()));
     }
 
     let json_response = serde_json::json!({
