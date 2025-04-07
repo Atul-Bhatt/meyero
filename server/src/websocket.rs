@@ -13,9 +13,10 @@ pub async fn handle_connection(
             Ok(msg) => {
                 if let Message::Text(text) = msg {
                     println!("Received: {}", text);
-                    // stream.send(Message::Text(text)).await.unwrap();
                     // Todo: make update_message fallible
                     repository::message_repository::update_message(&data, &message_channel, text.to_string()).await;
+                    let received_message = repository::message_repository::fetch_message(&data, message_channel.to_user.to_string(), message_channel.from_user.to_string()).await;
+                    stream.send(Message::Text(received_message)).await.unwrap();
                 }
             }
             Err(e) => {

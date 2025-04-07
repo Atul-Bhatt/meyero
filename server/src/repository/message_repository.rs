@@ -46,3 +46,15 @@ pub async fn update_message(data: &web::Data<AppState>, message_channel: &Messag
 
     Ok(())
 }
+
+pub async fn fetch_message(data: &web::Data<AppState>, from_user: String, to_user: String) -> String {
+    let query_result = sqlx::query_as!(
+        MessageChannel,
+        "Select message From messages Where from_user = $1 And to_user = $2",
+        from_user,
+        to_user
+        )
+        .fetch_one(&data.db)
+        .await;
+    return query_result.message
+}
