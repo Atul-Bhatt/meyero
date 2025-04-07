@@ -12,19 +12,45 @@ pub async fn initiate_messaging(
     message_channel: web::Json<MessageChannel>,
     data: web::Data<AppState>,
 ) -> impl Responder {
+    let mut send_canvas = String::from("");
+    let mut receive_canvas = String::from("");
+
     // check if a message channel already exists
-    let channel_exists = repository::message_repository::channel_exists(&data, &message_channel).await;
-    let exists: bool = channel_exists.unwrap();
-    if !exists {
-       // create a new channel 
-       let create_channel = repository::message_repository::create_message_channel(&data, &message_channel).await;
-       match create_channel {
-           Err(error) => {
-               return HttpResponse::InternalServerError()
-                   .json(serde_json::json!({"status": "error", "message": error.to_string()}))
+    let send_channel_exists = repository::message_repository::channel_exists(&data, message_channel.from_user.to_string(), message_channel.to_user.to_string()).await;
+    match send_channel_exists {
+        Ok(msg) => {
+            send_canvas = msg;
+        }
+        Err(_) => {
+           // create a new channel 
+           let create_channel = repository::message_repository::create_message_channel(&data, message_channel.from_user.to_string(), message_channel.to_user.to_string()).await;
+           match create_channel {
+               Err(error) => {
+                   return HttpResponse::InternalServerError()
+                       .json(serde_json::json!({"status": "error", "message": error.to_string()}))
+               }
+               _ => {}
            }
-           _ => {}
-       }
+        }
+    }
+
+    // to check receiver channel, switch from_user with to_user
+    let receive_channel_exists = repository::message_repository::channel_exists(&data, message_channel.to_user.to_string(), message_channel.from_user.to_string()).await;
+    match receive_channel_exists {
+        Ok(msg) => {
+            receive_canvas = msg;
+        }
+        Err(_) => {
+           // create a new channel receiver channel, switch from_user with to_user 
+           let create_channel = repository::message_repository::create_message_channel(&data, message_channel.to_user.to_string(), message_channel.from_user.to_string()).await;
+           match create_channel {
+               Err(error) => {
+                   return HttpResponse::InternalServerError()
+                       .json(serde_json::json!({"status": "error", "message": error.to_string()}))
+               }
+               _ => {}
+           }
+        }
     }
 
     // start a websocket connection
@@ -37,7 +63,8 @@ pub async fn initiate_messaging(
     }
 
     let json_response = serde_json::json!({
-        "status": "success"
+        "send_canvas": send_canvas,
+        "receive_canvas": receive_canvas
     });
     HttpResponse::Ok().json(json_response)
 }
