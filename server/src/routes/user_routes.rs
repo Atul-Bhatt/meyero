@@ -3,7 +3,7 @@ use argon2::{Argon2, PasswordHasher, PasswordVerifier, password_hash::SaltString
 use rand_core::OsRng;
 use crate::AppState;
 use crate::auth;
-use crate::repository;
+use crate::repository::user_repository;
 use crate::auth::AuthUser;
 use serde_json;
 
@@ -20,7 +20,7 @@ async fn get_all_users(
             .json(serde_json::json!({"status": "error", "message": "invalid or missing token"}))
     }
 
-    let result =  repository::user_repository::get_all_users(&data).await;
+    let result = user_repository::get_all_users(&data).await;
     if result.is_err() {
         let message = "Error occured while fetching all users";
         return HttpResponse::InternalServerError()
@@ -52,7 +52,7 @@ async fn edit_user(
     
     let user_id = path.into_inner();
 
-    let result = repository::user_repository::get_user_by_id(&data, &user_id).await;
+    let result = user_repository::get_user_by_id(&data, &user_id).await;
     if result.is_err() {
         let message = format!("User with ID: {} not found", user_id);
         return HttpResponse::NotFound()
@@ -60,7 +60,7 @@ async fn edit_user(
     }
     let db_user= result.unwrap();
 
-    let result = repository::user_repository::update_user(&data, body, db_user).await;
+    let result = user_repository::update_user(&data, body, db_user).await;
     match result {
         Ok(user) => {
             let user_response = serde_json::json!({"status": "success","data": serde_json::json!({
@@ -90,7 +90,7 @@ async fn delete_user(
     }
 
     let user_id = path.into_inner();
-    let rows_affected = repository::user_repository::delete_user(&data, &user_id).await;
+    let rows_affected = user_repository::delete_user(&data, &user_id).await;
     if rows_affected == 0 {
         let message = format!("User with ID: {} not found", user_id);
         return HttpResponse::NotFound().json(serde_json::json!({"status": "fail","message": message}));
@@ -109,7 +109,7 @@ async fn login(
     // get User-Agent from request
     let user_agent = request.headers().get("user-agent").unwrap().to_str().unwrap();
 
-    let result = repository::user_repository::get_user_by_username(&data, &user.username).await;
+    let result = user_repository::get_user_by_username(&data, &user.username).await;
     if result.is_err() {
         let message = format!("User with username: {} not found", user.username);
         return HttpResponse::NotFound()
@@ -124,7 +124,7 @@ async fn login(
     match compare_pass {
         Ok(_) => {
             // create session
-            let session_result = repository::user_repository::create_session(&data, &db_user.id, &user_agent.to_string()).await;
+            let session_result = user_repository::create_session(&data, &db_user.id, &user_agent.to_string()).await;
             match session_result {
                 Err(err) => {
                     let message = format!("Error: {:?}", err);
@@ -138,7 +138,7 @@ async fn login(
             // generate jwt token
             let token = auth::generate_jwt_token(db_user.id);
             // add jwt token to db
-            let result = repository::user_repository::add_token(&data, &session_id, &token).await;
+            let result = user_repository::add_token(&data, &session_id, &token).await;
             match result {
                 Err(err) => {
                     let message = format!("Error: {:?}", err);
@@ -172,7 +172,7 @@ async fn signup(
     let salt = SaltString::generate(&mut OsRng);
     let hashed_pass = Argon2::default().hash_password(user.password.clone().as_bytes(), &salt);
 
-    let result = repository::user_repository::add_user(&data, &user, hashed_pass.unwrap().to_string()).await;
+    let result = user_repository::add_user(&data, &user, hashed_pass.unwrap().to_string()).await;
     match result {
         Ok(result) => {
             let response = serde_json::json!({"status": "success", "data": serde_json::json!({
@@ -214,7 +214,7 @@ async fn search_user(
         return HttpResponse::Ok().json(serde_json::json!({"status": "success", "data": serde_json::json!({"users": []})}));
     }
 
-    let result = repository::user_repository::search_username_substring(&data, &query_params.unwrap().username).await; 
+    let result = user_repository::search_username_substring(&data, &query_params.unwrap().username).await; 
     match result {
         Ok(result) => {
             let response = serde_json::json!({
