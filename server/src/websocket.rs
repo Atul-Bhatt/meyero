@@ -15,7 +15,7 @@ pub async fn handle_connection(
                     println!("Received: {}", text);
                     // Todo: make update_message fallible
                     repository::message_repository::update_message(&data, &message_channel, text.to_string()).await;
-                    let received_message = repository::message_repository::fetch_message(&data, message_channel.to_user.to_string(), message_channel.from_user.to_string()).await;
+                    let received_message = repository::message_repository::fetch_message(&data, message_channel.to_user, message_channel.from_user).await;
                     stream.send(Message::Text(received_message)).await.unwrap();
                 }
             }
