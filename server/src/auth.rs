@@ -17,9 +17,9 @@ pub struct Claims {
     // pub exp: i64, // expiry
     // pub email: String,
     // pub role: String,
-    user_id: Uuid,
-    sub: String,
-    exp: i64
+    pub user_id: Uuid,
+    pub sub: String,
+    pub exp: i64
 }
 
 lazy_static::lazy_static! {

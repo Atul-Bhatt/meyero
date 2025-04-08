@@ -1,6 +1,7 @@
 use crate::{models::message_model::MessageChannel, repository::message_repository};
 use crate::AppState;
 use crate::websocket;
+use crate::auth::AuthUser;
 use actix_web::{post, web, Responder, HttpResponse};
 use tokio_tungstenite::accept_async;
 use tokio::net::TcpListener;
@@ -8,9 +9,11 @@ use std::env;
 
 #[post("/initiate")]
 pub async fn initiate_messaging(
-    message_channel: web::Json<MessageChannel>,
+    auth: AuthUser,
+    mut message_channel: web::Json<MessageChannel>,
     data: web::Data<AppState>,
 ) -> impl Responder {
+    message_channel.from_user = auth.token.unwrap().user_id;
     let mut send_canvas = String::from("");
     let mut receive_canvas = String::from("");
 
