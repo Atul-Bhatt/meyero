@@ -4,21 +4,15 @@ const Chat = ({lastJsonMessage, handleSendMessage}) => {
 	return (
 		<div className="main-container">
 		<div className="left-container">
-			<div className="chat-header">
-				<p>Client</p>
-			</div>
 			<div className="chat-body">
-				<input 
+				<textarea
 					onKeyDownCapture={handleSendMessage}>
-				</input>
+				</textarea>
 			</div>
 		</div>
 		<div className="right-container">
-			<div className="chat-header">
-				<p>Server</p>
-			</div>
 			<div className="chat-body">
-				<input value={lastJsonMessage?.data?.message}></input>
+				<textarea value={lastJsonMessage?.data?.message}></textarea>
 			</div>
 		</div>
 		</div>
