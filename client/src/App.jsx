@@ -5,8 +5,13 @@ import WebSocket from './WebSocket/WebSocket'
 import Home from './Pages/Home/Home'
 import NotFound from './Pages/NotFound/NotFound'
 import { Routes, Route } from 'react-router-dom'
+import axios from 'axios';
 
 function App() {
+  const token = localStorage.getItem("token");
+  if (token) {
+    axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+  }
   return (
     <>
       <Routes>

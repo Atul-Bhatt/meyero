@@ -2,7 +2,7 @@ import './LoginSignup.css'
 import { API_ROUTES, APP_ROUTES } from '../../utils/constants'
 
 import google_logo from '../Assets/google_logo.png';
-import apple_logo from '../Assets/apple_logo.png';
+import apple_logo from '../Assets/apple_logo.svg';
 import login_background from '../Assets/login_background.jpg';
 import axios from 'axios';
 import { useState } from 'react';
@@ -13,16 +13,18 @@ const LoginSignup = () => {
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
 
         try {
-            const response = axios.post(API_ROUTES.LOG_IN, {
+            const response = await axios.post(API_ROUTES.LOG_IN, {
                 username,
                 password
             });
 
-            console.log(response.data);
+			const token = response.data.data.token
+			localStorage.setItem("token", token)
+			axios.defaults.headers.common["Authorization"] = `Bearer ${token}`
             navigate(APP_ROUTES.HOME)
         } catch(error) {
             console.log(error);
@@ -39,15 +41,19 @@ const LoginSignup = () => {
             <div className="text">Log in</div>
         </div>
         <div className="other-logins">
-            <button className="other-login-button">
-                <img src={google_logo} alt="google_logo"></img>
-                <span>Continue with Google</span>
-            </button>
+            <div className="other-login-button">
+                <div>
+                    <img src={google_logo} alt="google_logo"></img>
+                </div>
+                <div>
+                    <span>Continue with Google</span>
+                </div>
+            </div>
             <br/>
-            <button className="other-login-button">
+            <div className="other-login-button">
                 <img src={apple_logo} alt="apple_logo" />
                 <span>Continue with Apple</span>
-            </button>
+            </div>
         </div>
         <div className="line-container">
             <p><span>OR</span></p>

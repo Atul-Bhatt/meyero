@@ -9,6 +9,10 @@ const Sidebar = () => {
     const [users, setUsers] = useState([]);
 
     useEffect(() => {
+		const token = localStorage.getItem("token");
+		if (token) {
+			axios.defaults.headers.common["Authorization"] = `Bearer ${token}`
+		}
         axios.get(API_ROUTES.GET_USER_LIST)
             .then(response => {
                 setUsers(response.data.user)
