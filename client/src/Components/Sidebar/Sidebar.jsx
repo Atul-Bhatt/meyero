@@ -27,7 +27,7 @@ const Sidebar = () => {
             {/* List of users */}
             <div className='people__list'>
                 {users.map(user => (
-                    <People name={user.name}/>
+                    <People name={user.name} id={user.id}/>
                 ))}
             </div>
         </div>   

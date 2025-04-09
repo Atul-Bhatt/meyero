@@ -17,8 +17,8 @@
 .sidebar {
     grid-column: 1 / 2;
     grid-row: 2 / 3;
-    background-color: #f0f0f0;
-    padding: 1em;
+    /*background-color: #f0f0f0;
+    padding: 1em;*/
 }
   
 .main__body {
