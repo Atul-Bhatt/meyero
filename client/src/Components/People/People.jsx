@@ -3,7 +3,7 @@ import Avatar from '@mui/material/Avatar'
 import { API_ROUTES } from '../../utils/constants'
 import axios from 'axios';
 
-const People = ({ name, id, photoUrl }) => {
+const People = ({ name, id, photoUrl, set_user_id }) => {
   const openChat = async (event) => {
 		const token = localStorage.getItem("token");
 		if (token) {
@@ -23,6 +23,8 @@ const People = ({ name, id, photoUrl }) => {
     } catch(error) {
         console.log(error);
     }
+
+    set_user_id(id)
   };
 
   return (

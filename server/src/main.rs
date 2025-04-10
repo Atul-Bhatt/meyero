@@ -25,6 +25,25 @@ async fn main() {
    let pool = PgPool::connect(&env::var("DATABASE_URL").unwrap()).await.unwrap();
    sqlx::migrate!().run(&pool).await.unwrap(); 
 
+   // start a websocket connection
+   tokio::spawn(async move {
+        let url = env::var("WEBSOCKET_URL").expect("Error getting WEBSOCKET_URL");
+        let listener = TcpListener::bind(url).await.unwrap();
+        while let Ok((stream, _)) = listener.accept().await {
+            let callback = |req: &Request, mut res: Response| {
+                if let Some(path) = req.uri().path().strip_prefix("/ws/user/") {
+                    println!("User {} connected", path);
+                    // You can store user ID or do routing here.
+                }
+                Ok(res)
+            };
+
+            println!("waiting for connection");
+            let ws_stream = accept_hdr_async(stream, callback).await.unwrap();
+            tokio::spawn(websocket::handle_connection(ws_stream));
+        }
+   });
+
    let _ = HttpServer::new(move || {
         App::new()
         .app_data(web::Data::new(AppState {db: pool.clone() }))
@@ -47,21 +66,4 @@ async fn main() {
     .run()
     .await;
 
-    // start a websocket connection
-    tokio::spawn(async move {
-        let url = env::var("WEBSOCKET_URL").expect("Error getting WEBSOCKET_URL");
-        let listener = TcpListener::bind(url).await.unwrap();
-        while let Ok((stream, _)) = listener.accept().await {
-            let callback = |req: &Request, mut res: Response| {
-                if let Some(path) = req.uri().path().strip_prefix("/ws/user/") {
-                    println!("User {} connected", path);
-                    // You can store user ID or do routing here.
-                }
-                Ok(res)
-            };
-
-            let ws_stream = accept_hdr_async(stream, callback).await.unwrap();
-            tokio::spawn(websocket::handle_connection(ws_stream));
-        }
-    });
 }
