@@ -3,8 +3,6 @@ use crate::AppState;
 use crate::websocket;
 use crate::auth::AuthUser;
 use actix_web::{post, web, Responder, HttpResponse};
-use tokio_tungstenite::accept_async;
-use tokio::net::TcpListener;
 use std::env;
 
 #[post("/initiate")]
@@ -75,14 +73,6 @@ pub async fn initiate_messaging(
         }
     }
 
-    // start a websocket connection
-    let url = env::var("WEBSOCKET_URL").expect("Error getting WEBSOCKET_URL");
-    let listener = TcpListener::bind(url).await.unwrap();
-
-    if let Ok((stream, _)) = listener.accept().await {
-        let ws_stream = accept_async(stream).await.unwrap();
-        tokio::spawn(websocket::handle_connection(ws_stream, message_channel.clone(), data.clone()));
-    }
 
     let json_response = serde_json::json!({
         "send_canvas": send_canvas,

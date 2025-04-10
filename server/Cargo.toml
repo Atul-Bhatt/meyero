@@ -12,6 +12,7 @@ anyhow = "1.0.95"
 argon2 = "0.5.3"
 chrono = {version = "0.4.23", features = ["serde"]}
 dotenv = "0.15.0"
+env_logger = "0.11.8"
 futures = "0.3.31"
 futures-util = "0.3.31"
 jsonwebtoken = "9.3.0"
