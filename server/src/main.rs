@@ -25,7 +25,7 @@ async fn main() {
    let pool = PgPool::connect(&env::var("DATABASE_URL").unwrap()).await.unwrap();
    sqlx::migrate!().run(&pool).await.unwrap(); 
 
-   // start a websocket connection
+   // listen for websocket connections
    tokio::spawn(async move {
         let url = env::var("WEBSOCKET_URL").expect("Error getting WEBSOCKET_URL");
         let listener = TcpListener::bind(url).await.unwrap();
@@ -38,7 +38,6 @@ async fn main() {
                 Ok(res)
             };
 
-            println!("waiting for connection");
             let ws_stream = accept_hdr_async(stream, callback).await.unwrap();
             tokio::spawn(websocket::handle_connection(ws_stream));
         }
