@@ -1,6 +1,11 @@
+import { useEffect, useState } from 'react';
 import './Chat.css';
 
 const Chat = ({lastJsonMessage, handleSendMessage, currentUser, canvas}) => {
+	const [sendCanvas, setSendCanvas] = useState()
+	useEffect(()=>{
+		setSendCanvas(canvas?.sent)
+	},[canvas?.sent])
 	return (
 		<div className="main-container">
 		<div className="left-container">
@@ -9,8 +14,9 @@ const Chat = ({lastJsonMessage, handleSendMessage, currentUser, canvas}) => {
 			</div>
 			<div className="chat-body">
 				<textarea
-					onKeyDownCapture={handleSendMessage}
-					value={canvas?.sent}>
+					onKeyDownCapture={e => {handleSendMessage(e); }}
+					onChange={e => setSendCanvas(e.target.value)}
+					value={sendCanvas}>
 				</textarea>
 			</div>
 		</div>
