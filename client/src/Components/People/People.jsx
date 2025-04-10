@@ -3,7 +3,7 @@ import Avatar from '@mui/material/Avatar'
 import { API_ROUTES } from '../../utils/constants'
 import axios from 'axios';
 
-const People = ({ user, photoUrl, setCurrentUser}) => {
+const People = ({ user, photoUrl, setCurrentUser, setCanvas}) => {
   const openChat = async (event) => {
 		const token = localStorage.getItem("token");
 		if (token) {
@@ -20,6 +20,11 @@ const People = ({ user, photoUrl, setCurrentUser}) => {
           "updated_at": "2025-04-09T12:05:23+00:00",
     });
     console.log(response)
+    let canvas = {
+      received: response.data.receive_canvas,
+      sent: response.data.send_canvas
+    }
+    setCanvas(canvas)
     } catch(error) {
         console.log(error);
     }

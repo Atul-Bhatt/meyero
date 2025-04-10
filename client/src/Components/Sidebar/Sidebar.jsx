@@ -5,7 +5,7 @@ import React, { useState, useEffect } from 'react';
 import People from '../People/People';
 import axios from 'axios';
 
-const Sidebar = ({setCurrentUser}) => {
+const Sidebar = ({setCurrentUser, setCanvas}) => {
     const [users, setUsers] = useState([]);
 
     useEffect(() => {
@@ -27,7 +27,7 @@ const Sidebar = ({setCurrentUser}) => {
             {/* List of users */}
             <div className='people__list'>
                 {users.map(user => (
-                    <People user={user} setCurrentUser={setCurrentUser}/>
+                    <People user={user} setCurrentUser={setCurrentUser} setCanvas={setCanvas}/>
                 ))}
             </div>
         </div>   

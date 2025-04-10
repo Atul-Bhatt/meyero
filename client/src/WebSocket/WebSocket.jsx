@@ -2,7 +2,7 @@ import useWebSocket, { ReadyState } from "react-use-websocket"
 import {useEffect} from 'react';
 import Chat from "../Components/Chat/Chat";
 
-export const WebSocket = ({currentUser}) => {
+export const WebSocket = ({currentUser, canvas}) => {
 	const socket_url = `ws://localhost:8080/ws/user/${currentUser.id}`
 	const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket(
 		socket_url,
@@ -24,7 +24,6 @@ export const WebSocket = ({currentUser}) => {
 			})
 		}
 	}, [readyState])
-console.log(readyState)
 	useEffect(() => {
 		console.log(`Got a new message: ${JSON.stringify(lastJsonMessage)}`)
 	}, [lastJsonMessage])
@@ -45,7 +44,8 @@ console.log(readyState)
 	return (
 		<Chat lastJsonMessage={lastJsonMessage} 
 			handleSendMessage={handleSendMessage}
-			currentUser={currentUser}/>
+			currentUser={currentUser}
+			canvas={canvas}/>
     ) 
 }
 
