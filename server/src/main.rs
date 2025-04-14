@@ -12,6 +12,7 @@ use tokio::net::TcpListener;
 use sqlx::{Pool, Postgres, PgPool};
 use std::env;
 use dotenv::dotenv;
+use std::sync::{Arc, Mutex};
 
 pub struct AppState {
     db: Pool<Postgres>,
@@ -26,7 +27,9 @@ async fn main() {
    sqlx::migrate!().run(&pool).await.unwrap(); 
 
    let db_pool = web::Data::new(AppState {db: pool.clone() });
-   let mut to_user = "";
+   //let mut to_user = "e4f9c408-a6f7-46a2-bfea-e883e1a9a676";
+   let user_id_holder = Arc::new(Mutex::new(None));
+   let user_id_holder_clone = user_id_holder.clone();
 
    // listen for websocket connections
    tokio::spawn(async move{
@@ -35,12 +38,14 @@ async fn main() {
         while let Ok((stream, _)) = listener.accept().await {
             let callback = |req: &Request, res: Response| {
                 if let Some(path) = req.uri().path().strip_prefix("/ws/user/") {
+                    *user_id_holder_clone.lock().unwrap() = Some(path.to_string());
                     println!("User {} connected", path);
                 }
                 Ok(res)
             };
 
             let ws_stream= accept_hdr_async(stream, callback).await.unwrap();
+            let to_user= user_id_holder.lock().unwrap().clone().unwrap();
             tokio::spawn(websocket::handle_connection(ws_stream, db_pool.clone(), to_user));
         }
    });
