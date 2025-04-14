@@ -9,7 +9,7 @@ use chrono::Utc;
 pub async fn handle_connection(
     mut stream: tokio_tungstenite::WebSocketStream<tokio::net::TcpStream>,
     data: web::Data<AppState>,
-    to_user: String 
+    ws_data: message_model::WebSocketData 
 ) {
     while let Some(msg) = stream.next().await {
         match msg {
@@ -18,8 +18,8 @@ pub async fn handle_connection(
                     let json_message: WSMessage = serde_json::from_str(&text).unwrap();
                     let message_channel = MessageChannel {
                         id: Uuid::parse_str("dff68241-6ae4-4924-acbf-60cb954f76f8").unwrap(),
-                        from_user: Uuid::parse_str("6add00c0-fbce-4846-95a1-f403f3f55fc3").unwrap(), // butters
-                        to_user: Uuid::parse_str(to_user.as_str()).unwrap(),
+                        from_user: ws_data.token.clone().unwrap().user_id,
+                        to_user: Uuid::parse_str(ws_data.to_user.as_str()).unwrap(),
                         message: Some(json_message.message),
                         created_at: Utc::now(),
                         updated_at: Utc::now()

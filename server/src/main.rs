@@ -37,16 +37,21 @@ async fn main() {
         let listener = TcpListener::bind(url).await.unwrap();
         while let Ok((stream, _)) = listener.accept().await {
             let callback = |req: &Request, res: Response| {
+                let mut web_socket_data = models::message_model::WebSocketData {token: None, to_user: "".to_string()};
                 if let Some(path) = req.uri().path().strip_prefix("/ws/user/") {
-                    *user_id_holder_clone.lock().unwrap() = Some(path.to_string());
+                    web_socket_data.to_user = path.to_string();
                     println!("User {} connected", path);
                 }
+                if let Some(token) = req.uri().query() {
+                    web_socket_data.token = Some(auth::decode_token(&token[6..]).unwrap());
+                }
+                *user_id_holder_clone.lock().unwrap() = Some(web_socket_data);
                 Ok(res)
             };
 
             let ws_stream= accept_hdr_async(stream, callback).await.unwrap();
-            let to_user= user_id_holder.lock().unwrap().clone().unwrap();
-            tokio::spawn(websocket::handle_connection(ws_stream, db_pool.clone(), to_user));
+            let ws_data = user_id_holder.lock().unwrap().clone().unwrap();
+            tokio::spawn(websocket::handle_connection(ws_stream, db_pool.clone(), ws_data));
         }
    });
 

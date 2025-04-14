@@ -1,7 +1,7 @@
 use uuid::Uuid;
 use chrono::{DateTime, Utc};
 use serde::{Serialize, Deserialize};
-
+use crate::auth;
 #[derive(Deserialize, Serialize, sqlx::FromRow, Clone)]
 pub struct MessageChannel {
     pub id: Uuid,
@@ -15,4 +15,10 @@ pub struct MessageChannel {
 #[derive(Deserialize, Serialize, Debug)]
 pub struct WSMessage {
     pub message: String
+}
+
+#[derive(Clone)]
+pub struct WebSocketData {
+    pub token: Option<auth::Claims>,
+    pub to_user: String
 }

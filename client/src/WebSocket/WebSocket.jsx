@@ -3,10 +3,11 @@ import {useEffect} from 'react';
 import Chat from "../Components/Chat/Chat";
 
 export const WebSocket = ({currentUser, canvas}) => {
-	const socket_url = `ws://localhost:8080/ws/user/${currentUser.id}`
+	const token = localStorage.getItem('token')
+	const socket_url = `ws://localhost:8080/ws/user/${currentUser.id}?token=${token}`
 	const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket(
 		socket_url,
-		{
+				{
 			share: false,
 			shouldReconnect: () => false,
 		},
