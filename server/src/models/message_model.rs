@@ -12,3 +12,7 @@ pub struct MessageChannel {
     pub updated_at: DateTime<Utc> 
 }
 
+#[derive(Deserialize, Serialize)]
+pub struct WSMessage {
+    pub message: String
+}

@@ -13,17 +13,17 @@ export const WebSocket = ({currentUser, canvas}) => {
 	)
 
 	// Run when the connection state (readyState) changes
-	useEffect(() => {
-		console.log("Connection state changed")
-		if (readyState === ReadyState.OPEN) {
-			sendJsonMessage({
-				event: "subscribe",
-				data: {
-					channel: "general-chatroom",
-				},
-			})
-		}
-	}, [readyState])
+	// useEffect(() => {
+	// 	console.log("Connection state changed")
+	// 	if (readyState === ReadyState.OPEN) {
+	// 		sendJsonMessage({
+	// 			event: "subscribe",
+	// 			data: {
+	// 				channel: "general-chatroom",
+	// 			},
+	// 		})
+	// 	}
+	// }, [readyState])
 	useEffect(() => {
 		console.log(`Got a new message: ${JSON.stringify(lastJsonMessage)}`)
 	}, [lastJsonMessage])
@@ -32,11 +32,7 @@ export const WebSocket = ({currentUser, canvas}) => {
 		if (event.key === 'Enter') {
 			console.log('Sending message to server')
 			sendJsonMessage({
-				event: "subscribe",
-				data: {
-					channel: "general-chatroom",
-					message: event.target.value 
-				}
+				message: event.target.value
 			})
 		}
 	}

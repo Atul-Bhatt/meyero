@@ -26,22 +26,22 @@ async fn main() {
    sqlx::migrate!().run(&pool).await.unwrap(); 
 
    let db_pool = web::Data::new(AppState {db: pool.clone() });
+   let mut to_user = "";
 
    // listen for websocket connections
-   tokio::spawn(async move {
+   tokio::spawn(async move{
         let url = env::var("WEBSOCKET_URL").expect("Error getting WEBSOCKET_URL");
         let listener = TcpListener::bind(url).await.unwrap();
         while let Ok((stream, _)) = listener.accept().await {
-            let callback = |req: &Request, mut res: Response| {
+            let callback = |req: &Request, res: Response| {
                 if let Some(path) = req.uri().path().strip_prefix("/ws/user/") {
                     println!("User {} connected", path);
-                    // You can store user ID or do routing here.
                 }
                 Ok(res)
             };
 
-            let ws_stream = accept_hdr_async(stream, callback).await.unwrap();
-            tokio::spawn(websocket::handle_connection(ws_stream, db_pool.clone()));
+            let ws_stream= accept_hdr_async(stream, callback).await.unwrap();
+            tokio::spawn(websocket::handle_connection(ws_stream, db_pool.clone(), to_user));
         }
    });
 
