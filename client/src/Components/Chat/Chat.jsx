@@ -10,7 +10,7 @@ const Chat = ({lastJsonMessage, handleSendMessage, otherUser, canvas}) => {
 		<div className="main-container">
 		<div className="left-container">
 			<div className="chat-header">
-				<p>You</p>
+				<p>{localStorage.getItem("userName")} (You)</p>
 			</div>
 			<div className="chat-body">
 				<textarea
