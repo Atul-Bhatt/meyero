@@ -23,7 +23,9 @@ const LoginSignup = () => {
             });
 
 			const token = response.data.data.token
+            const userId = response.data.data.user_id
 			localStorage.setItem("token", token)
+            localStorage.setItem("userId", userId)
 			axios.defaults.headers.common["Authorization"] = `Bearer ${token}`
             navigate(APP_ROUTES.HOME)
         } catch(error) {

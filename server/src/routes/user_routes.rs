@@ -150,6 +150,7 @@ async fn login(
 
             let user_response = serde_json::json!({"status": "success","data": serde_json::json!({
                 "user":db_user.username,
+                "user_id": db_user.id,
                 "token": token,
             })});
 

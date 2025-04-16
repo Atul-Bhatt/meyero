@@ -1,5 +1,4 @@
 use crate::models::message_model::MessageChannel;
-use std::io::Error;
 use crate::AppState;
 use actix_web::web;
 use anyhow::Result;

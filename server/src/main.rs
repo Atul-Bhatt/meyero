@@ -54,7 +54,7 @@ async fn main() {
             let ws_data = user_id_holder.lock().unwrap().clone().unwrap();
 
             // split the websocket stream into read and write
-            let (mut write, mut read) = ws_stream.split();
+            let (write, read) = ws_stream.split();
             tokio::spawn(websocket::handle_read_connection(read, db_pool.clone(), ws_data.clone()));
             tokio::spawn(websocket::handle_write_connection(write, db_pool.clone(), ws_data));
         }

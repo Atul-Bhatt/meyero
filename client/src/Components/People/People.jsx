@@ -2,6 +2,7 @@ import './People.css'
 import Avatar from '@mui/material/Avatar'
 import { API_ROUTES } from '../../utils/constants'
 import axios from 'axios';
+import {v4 as uuidv4} from 'uuid';
 
 const People = ({ user, photoUrl, setOtherUser, setCanvas}) => {
   const openChat = async (event) => {
@@ -12,12 +13,13 @@ const People = ({ user, photoUrl, setOtherUser, setCanvas}) => {
     event.preventDefault();
 
     try {
-        const response = await axios.post(API_ROUTES.INITIATE_CHAT, {
-          "id": "6add00c0-fbce-4846-95a1-f403f3f55fc3",
-          "from_user": "6add00c0-fbce-4846-95a1-f403f3f55fc3",
-          "to_user": user.id,
-          "created_at": "2025-04-09T12:05:23+00:00",
-          "updated_at": "2025-04-09T12:05:23+00:00",
+      const now = new Date();
+      const response = await axios.post(API_ROUTES.INITIATE_CHAT, {
+        "id": uuidv4(),
+        "from_user": localStorage.getItem("userId"),
+        "to_user": user.id,
+        "created_at": now.toISOString(),
+        "updated_at": now.toISOString()
     });
     console.log(response)
     let canvas = {

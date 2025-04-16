@@ -1,9 +1,7 @@
 use crate::{models::message_model::MessageChannel, repository::message_repository};
 use crate::AppState;
-use crate::websocket;
 use crate::auth::AuthUser;
 use actix_web::{post, web, Responder, HttpResponse};
-use std::env;
 
 #[post("/initiate")]
 pub async fn initiate_messaging(
