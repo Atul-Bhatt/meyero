@@ -30,12 +30,10 @@ export const WebSocket = ({currentUser, canvas}) => {
 	}, [lastJsonMessage])
 
 	const handleSendMessage = (event) => {
-		if (event.key === 'Enter') {
-			console.log('Sending message to server')
-			sendJsonMessage({
-				message: event.target.value
-			})
-		}
+		console.log('Sending message to server')
+		sendJsonMessage({
+			message: event.target.value
+		})
 	}
 
 	return (
