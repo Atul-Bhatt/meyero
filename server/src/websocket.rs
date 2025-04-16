@@ -3,10 +3,11 @@ use tokio_tungstenite::WebSocketStream;
 use futures_util::{StreamExt, SinkExt, stream::SplitSink};
 use futures::stream::SplitStream;
 use actix_web::web;
-use crate::{AppState, repository, models::message_model};
+use crate::{AppState, repository::message_repository, models::message_model};
 use crate::models::message_model::{MessageChannel, WSMessage};
 use uuid::Uuid;
 use chrono::Utc;
+use tokio::time::{sleep, Duration};
 
 
 pub async fn handle_read_connection(
@@ -20,7 +21,7 @@ pub async fn handle_read_connection(
                 if let Message::Text(text) = msg {
                     let json_message: WSMessage = serde_json::from_str(&text).unwrap();
                     let message_channel = MessageChannel {
-                        id: Uuid::parse_str("dff68241-6ae4-4924-acbf-60cb954f76f8").unwrap(),
+                        id: Uuid::nil(),
                         from_user: ws_data.token.clone().unwrap().user_id,
                         to_user: Uuid::parse_str(ws_data.to_user.as_str()).unwrap(),
                         message: Some(json_message.message),
@@ -29,7 +30,7 @@ pub async fn handle_read_connection(
                     };
                     println!("Received: {}", text);
                     // Todo: make update_message fallible
-                    repository::message_repository::update_message(&data, &message_channel).await;
+                    message_repository::update_message(&data, &message_channel).await;
                 }
             }
             Err(e) => {
@@ -45,8 +46,19 @@ pub async fn handle_write_connection(
     data: web::Data<AppState>,
     ws_data: message_model::WebSocketData 
 ) {
-    while true {
-        let received_message = repository::message_repository::fetch_message(&data, Uuid::parse_str(ws_data.to_user.as_str()).unwrap(), ws_data.token.clone().unwrap().user_id).await;
-        write.send(Message::Text(received_message)).await.unwrap();
+    let mut last_message = String::from("");
+    loop {
+        let received_message = message_repository::fetch_message(
+            &data,
+            Uuid::parse_str(ws_data.to_user.as_str()).unwrap(),
+            ws_data.token.clone().unwrap().user_id
+        ).await;
+
+        if last_message != received_message {
+            last_message = received_message.clone();
+            write.send(Message::Text(received_message)).await.unwrap();
+        }
+
+        sleep(Duration::from_secs(1)).await;
     }
 }
