@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import './Chat.css';
 
-const Chat = ({lastJsonMessage, handleSendMessage, currentUser, canvas}) => {
+const Chat = ({lastJsonMessage, handleSendMessage, otherUser, canvas}) => {
 	const [sendCanvas, setSendCanvas] = useState()
 	useEffect(()=>{
 		setSendCanvas(canvas?.sent)
@@ -22,7 +22,7 @@ const Chat = ({lastJsonMessage, handleSendMessage, currentUser, canvas}) => {
 		</div>
 		<div className="right-container">
 			<div className="chat-header">
-				<p>{currentUser?.name||"Other User"}</p>
+				<p>{otherUser?.name||"Other User"}</p>
 			</div>
 			<div className="chat-body">
 				<textarea value={lastJsonMessage?.data?.message||canvas?.received}></textarea>

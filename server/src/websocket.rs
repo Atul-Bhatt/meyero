@@ -56,7 +56,8 @@ pub async fn handle_write_connection(
 
         if last_message != received_message {
             last_message = received_message.clone();
-            write.send(Message::Text(received_message)).await.unwrap();
+            write.send(Message::Text(received_message.clone())).await.unwrap();
+            println!("Sending: {}", received_message)
         }
 
         sleep(Duration::from_secs(1)).await;

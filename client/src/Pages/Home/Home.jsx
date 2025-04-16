@@ -4,17 +4,17 @@ import WebSocket from '../../WebSocket/WebSocket';
 import { useState } from 'react';
 
 const Home = () => {
-	const [currentUser, setCurrentUser] = useState("")	
+	const [otherUser, setOtherUser] = useState("")	
 	const [canvas, setCanvas] = useState("")
 	return (
 		<div className='container'>
 			<div className='navbar'></div>
 			<div className='container__body'>
 				<div className='sidebar'>
-					<Sidebar setCurrentUser={setCurrentUser} setCanvas={setCanvas}/>
+					<Sidebar setOtherUser={setOtherUser} setCanvas={setCanvas}/>
 				</div>
 				<div className='main__body'>
-					<WebSocket currentUser={currentUser} canvas={canvas}/>
+					<WebSocket otherUser={otherUser} canvas={canvas}/>
 				</div>
 			</div>
 		</div>
