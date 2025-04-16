@@ -25,7 +25,7 @@ const Chat = ({lastJsonMessage, handleSendMessage, otherUser, canvas}) => {
 				<p>{otherUser?.name||"Other User"}</p>
 			</div>
 			<div className="chat-body">
-				<textarea value={lastJsonMessage?.data?.message||canvas?.received}></textarea>
+				<textarea value={lastJsonMessage?.message||canvas?.received}></textarea>
 			</div>
 		</div>
 		</div>

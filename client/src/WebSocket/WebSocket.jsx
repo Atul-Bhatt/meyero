@@ -26,7 +26,7 @@ export const WebSocket = ({otherUser, canvas}) => {
 	// 	}
 	// }, [readyState])
 	useEffect(() => {
-		console.log(`Got a new message: ${JSON.stringify(lastJsonMessage)}`)
+		console.log(`Got a new message: ${JSON.stringify(lastJsonMessage?.message)}`)
 	}, [lastJsonMessage])
 
 	const handleSendMessage = (event) => {

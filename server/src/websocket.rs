@@ -56,8 +56,8 @@ pub async fn handle_write_connection(
 
         if last_message != received_message {
             last_message = received_message.clone();
-            write.send(Message::Text(received_message.clone())).await.unwrap();
-            println!("Sending: {}", received_message)
+            let json_msg = serde_json::json!({ "message": received_message }).to_string();
+            write.send(Message::Text(json_msg)).await.unwrap();
         }
 
         sleep(Duration::from_secs(1)).await;
