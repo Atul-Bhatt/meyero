@@ -8,6 +8,7 @@ use actix_web::{web, App, HttpServer, middleware};
 use actix_cors;
 use tokio_tungstenite::{accept_hdr_async, tungstenite::handshake::server::{Request, Response}};
 use tokio::net::TcpListener;
+use futures_util::StreamExt;
 
 use sqlx::{Pool, Postgres, PgPool};
 use std::env;
@@ -51,7 +52,11 @@ async fn main() {
 
             let ws_stream= accept_hdr_async(stream, callback).await.unwrap();
             let ws_data = user_id_holder.lock().unwrap().clone().unwrap();
-            tokio::spawn(websocket::handle_connection(ws_stream, db_pool.clone(), ws_data));
+
+            // split the websocket stream into read and write
+            let (mut write, mut read) = ws_stream.split();
+            tokio::spawn(websocket::handle_read_connection(read, db_pool.clone(), ws_data.clone()));
+            tokio::spawn(websocket::handle_write_connection(write, db_pool.clone(), ws_data));
         }
    });
 

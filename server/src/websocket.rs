@@ -1,17 +1,20 @@
 use tokio_tungstenite::tungstenite::Message;
-use futures_util::{StreamExt, SinkExt};
+use tokio_tungstenite::WebSocketStream;
+use futures_util::{StreamExt, SinkExt, stream::SplitSink};
+use futures::stream::SplitStream;
 use actix_web::web;
 use crate::{AppState, repository, models::message_model};
 use crate::models::message_model::{MessageChannel, WSMessage};
 use uuid::Uuid;
 use chrono::Utc;
 
-pub async fn handle_connection(
-    mut stream: tokio_tungstenite::WebSocketStream<tokio::net::TcpStream>,
+
+pub async fn handle_read_connection(
+    mut read: SplitStream<WebSocketStream<tokio::net::TcpStream>>,
     data: web::Data<AppState>,
     ws_data: message_model::WebSocketData 
 ) {
-    while let Some(msg) = stream.next().await {
+    while let Some(msg) = read.next().await {
         match msg {
             Ok(msg) => {
                 if let Message::Text(text) = msg {
@@ -27,8 +30,6 @@ pub async fn handle_connection(
                     println!("Received: {}", text);
                     // Todo: make update_message fallible
                     repository::message_repository::update_message(&data, &message_channel).await;
-                    let received_message = repository::message_repository::fetch_message(&data, message_channel.to_user, message_channel.from_user).await;
-                    stream.send(Message::Text(received_message)).await.unwrap();
                 }
             }
             Err(e) => {
@@ -36,5 +37,16 @@ pub async fn handle_connection(
                 break;
             }
         }
+    }
+}
+
+pub async fn handle_write_connection(
+    mut write: SplitSink<tokio_tungstenite::WebSocketStream<tokio::net::TcpStream>, Message>,
+    data: web::Data<AppState>,
+    ws_data: message_model::WebSocketData 
+) {
+    while true {
+        let received_message = repository::message_repository::fetch_message(&data, Uuid::parse_str(ws_data.to_user.as_str()).unwrap(), ws_data.token.clone().unwrap().user_id).await;
+        write.send(Message::Text(received_message)).await.unwrap();
     }
 }
