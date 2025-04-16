@@ -5,10 +5,11 @@ use uuid::Uuid;
 use anyhow::Result;
 use chrono::Utc;
 
-pub async fn get_all_users(data: &web::Data<AppState>) -> Result<Vec<User>> {
+pub async fn get_all_users(data: &web::Data<AppState>, user_id: Uuid) -> Result<Vec<User>> {
     let query_result = sqlx::query_as!(
         User,
-        "Select * From users"
+        "Select * From users where id <> $1",
+        user_id
     )
     .fetch_all(&data.db)
     .await?;

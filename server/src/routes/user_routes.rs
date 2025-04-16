@@ -9,6 +9,7 @@ use serde_json;
 
 use actix_web::{get, post, patch, delete, web, Responder, HttpResponse, HttpRequest};
 
+// fetch all users other than current user
 #[get("/list")]
 async fn get_all_users(
     auth: AuthUser,
@@ -20,7 +21,7 @@ async fn get_all_users(
             .json(serde_json::json!({"status": "error", "message": "invalid or missing token"}))
     }
 
-    let result = user_repository::get_all_users(&data).await;
+    let result = user_repository::get_all_users(&data, auth.token.unwrap().user_id).await;
     if result.is_err() {
         let message = "Error occured while fetching all users";
         return HttpResponse::InternalServerError()
@@ -230,7 +231,7 @@ async fn search_user(
             return HttpResponse::InternalServerError()
                 .json(serde_json::json!({"status": "error", "message": format!("{:?}", e)}));
         }
-}
+    }
 }
 
 pub fn config(conf: &mut web::ServiceConfig) {
