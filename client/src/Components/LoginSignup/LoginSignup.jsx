@@ -5,13 +5,19 @@ import google_logo from '../Assets/google_logo.png';
 import apple_logo from '../Assets/apple_logo.svg';
 import login_background from '../Assets/login_background.jpg';
 import axios from 'axios';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'
 
 const LoginSignup = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
+
+	useEffect(()=>{
+        if (localStorage.getItem("token") != undefined) {
+            navigate(APP_ROUTES.HOME)
+        }
+	},[])
 
     const handleSubmit = async (event) => {
         event.preventDefault();

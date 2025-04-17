@@ -1,11 +1,21 @@
 import './Home.css';
 import Sidebar from '../../Components/Sidebar/Sidebar'
 import WebSocket from '../../WebSocket/WebSocket';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom'
+import { APP_ROUTES } from '../../utils/constants'
 
 const Home = () => {
 	const [otherUser, setOtherUser] = useState("")	
 	const [canvas, setCanvas] = useState("")
+	const navigate = useNavigate()
+
+	useEffect(()=>{
+        if (localStorage.getItem("token") == undefined) {
+            navigate(APP_ROUTES.LOG_IN)
+        }
+	},[])
+
 	return (
 		<div className='container'>
 			<div className='navbar'></div>
