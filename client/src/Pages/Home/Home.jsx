@@ -1,5 +1,6 @@
 import './Home.css';
 import Sidebar from '../../Components/Sidebar/Sidebar'
+import Navbar from '../../Components/Navbar/Navbar'
 import WebSocket from '../../WebSocket/WebSocket';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'
@@ -18,7 +19,9 @@ const Home = () => {
 
 	return (
 		<div className='container'>
-			<div className='navbar'></div>
+			<div className='navbar'>
+				<Navbar />
+			</div>
 			<div className='container__body'>
 				<div className='sidebar'>
 					<Sidebar setOtherUser={setOtherUser} setCanvas={setCanvas}/>
