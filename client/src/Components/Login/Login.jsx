@@ -7,6 +7,7 @@ import login_background from '../Assets/login_background.jpg';
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 
 const LoginSignup = () => {
     const [username, setUsername] = useState('');
@@ -84,6 +85,9 @@ const LoginSignup = () => {
                 <button type="submit">LOG IN</button>
             </div>
             </form>
+        </div>
+        <div className="signup-instead">
+            <span>Don't have an account! <Link to={APP_ROUTES.SIGN_UP}> Sign Up</Link> instead.</span>
         </div>
         </div>
         </div>

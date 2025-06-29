@@ -7,6 +7,8 @@ import login_background from '../Assets/login_background.jpg';
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'
+import {v4 as uuidv4} from 'uuid';
+import { Link } from 'react-router-dom'
 
 const Signup = () => {
     const [name, setName] = useState('');
@@ -25,11 +27,15 @@ const Signup = () => {
         event.preventDefault();
 
         try {
+            const now = new Date();
             const response = await axios.post(API_ROUTES.SIGN_UP, {
-                name,
-                email,
-                username,
-                password
+                "id": uuidv4(),
+                "name": name,
+                "email": email,
+                "username": username,
+                "password": password,
+                "created_at": now.toISOString(),
+                "updated_at": now.toISOString()
             });
 
 			const token = response.data.data.token
@@ -98,6 +104,9 @@ const Signup = () => {
                 <button type="submit">SIGN UP</button>
             </div>
             </form>
+        </div>
+        <div className="login-instead">
+            <span>Already have an account! <Link to={APP_ROUTES.LOG_IN}> Log In</Link> instead.</span>
         </div>
         </div>
         </div>
