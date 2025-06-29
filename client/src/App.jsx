@@ -1,6 +1,7 @@
 import './App.css'
 import { APP_ROUTES } from './utils/constants'
-import LoginSignup from './Components/LoginSignup/LoginSignup'
+import Login from './Components/Login/Login'
+import Signup from './Components/Signup/Signup'
 import WebSocket from './WebSocket/WebSocket'
 import Home from './Pages/Home/Home'
 import NotFound from './Pages/NotFound/NotFound'
@@ -16,7 +17,8 @@ function App() {
     <>
       <Routes>
         <Route path={APP_ROUTES.HOME} element={<Home />} />
-        <Route path={APP_ROUTES.LOG_IN} element={<LoginSignup />} />
+        <Route path={APP_ROUTES.LOG_IN} element={<Login />} />
+        <Route path={APP_ROUTES.SIGN_UP} element={<Signup />} />
         <Route path={APP_ROUTES.WEBSOCKET} element={<WebSocket />} />
         <Route path='*' element={<NotFound />} />
       </Routes>

@@ -7,7 +7,7 @@ export const API_ROUTES = {
 }
 
 export const APP_ROUTES = {
-  //SIGN_UP: '/signup',
+  SIGN_UP: '/signup',
   LOG_IN: '/login',
   HOME: '/',
   WEBSOCKET: '/websocket',

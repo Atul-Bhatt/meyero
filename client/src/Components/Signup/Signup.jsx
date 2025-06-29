@@ -1,4 +1,4 @@
-import './LoginSignup.css'
+import './Signup.css'
 import { API_ROUTES, APP_ROUTES } from '../../utils/constants'
 
 import google_logo from '../Assets/google_logo.png';
@@ -8,8 +8,10 @@ import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'
 
-const LoginSignup = () => {
+const Signup = () => {
+    const [name, setName] = useState('');
     const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
 
@@ -23,7 +25,9 @@ const LoginSignup = () => {
         event.preventDefault();
 
         try {
-            const response = await axios.post(API_ROUTES.LOG_IN, {
+            const response = await axios.post(API_ROUTES.SIGN_UP, {
+                name,
+                email,
                 username,
                 password
             });
@@ -76,12 +80,22 @@ const LoginSignup = () => {
                     onChange={(event) => setUsername(event.target.value)}/>
             </div>
             <div className="input">
+                <input type="text"
+                    placeholder="Name"
+                    onChange={(event) => setName(event.target.value)}/>
+            </div>
+            <div className="input">
+                <input type="text"
+                    placeholder="Email"
+                    onChange={(event) => setEmail(event.target.value)}/>
+            </div>
+            <div className="input">
                 <input type="password"
                     placeholder="Password"
                     onChange={(event) => setPassword(event.target.value)}/>
             </div>
             <div className="submit-container">
-                <button type="submit">LOG IN</button>
+                <button type="submit">SIGN UP</button>
             </div>
             </form>
         </div>
@@ -90,4 +104,4 @@ const LoginSignup = () => {
     );
 }
 
-export default LoginSignup;
+export default Signup;
