@@ -1,5 +1,9 @@
 import './Navbar.css';
 import Avatar from '@mui/material/Avatar'
+import { useState, useEffect, useRef } from 'react';
+import { API_ROUTES } from '../../utils/constants'
+import axios from 'axios';
+import People from '../People/People';
 
 const Navbar = ({photoUrl, userName}) => {
     const handleLogOut = () => {
@@ -7,11 +11,63 @@ const Navbar = ({photoUrl, userName}) => {
         localStorage.removeItem("userId")
         localStorage.removeItem("userName")
     }
+
+    const [searchText, setSearchText] = useState('');
+	const [users, setUsers] = useState([]);
+	const handleSearch = (event) => {
+        event.preventDefault();
+
+		const token = localStorage.getItem("token");
+		if (token) {
+			axios.defaults.headers.common["Authorization"] = `Bearer ${token}`
+		}
+
+		axios.get(API_ROUTES.SEARCH, {
+			params: { username: searchText }
+		})
+		.then(response => {
+			setUsers(response.data.data.users)
+		})
+		.catch(error => {
+			console.log(error)
+		});
+		
+	};
+
+	const dropdownRef = useRef();
+
+	useEffect(() => {
+	  function handleClickOutside(event) {
+		if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+			setUsers([]);
+			dropdownRef.current.value = '';
+		}
+	  }
+
+	  document.addEventListener("mousedown", handleClickOutside);
+	  return () => {
+		document.removeEventListener("mousedown", handleClickOutside);
+	  };
+	}, []);
+
 	return (
     <nav className="navbar">
       <a href="/" className="navbar-logo">Meyero</a>
 
-      <input type="text" className="navbar-search" placeholder="Search users..." />
+      <input ref={dropdownRef}
+		type="text"
+		className="navbar-search"
+		placeholder="Search users..."
+		onChange={(event) => setSearchText(event.target.value)}
+		onKeyDown={(event) => { if (event.key === 'Enter') { handleSearch(event); }}}/>
+
+	  {users.length > 0 && (
+		<div className='search-dropdown'>
+			{users.map(user => (
+				<People user={user}/>
+			))}
+		</div>
+	  )}
 
       <div className="navbar-user">
         <Avatar src={photoUrl} />

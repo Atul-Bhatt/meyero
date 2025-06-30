@@ -17,7 +17,8 @@
 }
 
 .navbar-search {
-  width: 35%;
+  position: relative;
+  width: 20%;
   padding: 8px;
   border: 1px solid #ccc;
   border-radius: 4px;
@@ -59,4 +60,12 @@
 
 .navbar-dropdown a:hover {
   background-color: #f0f0f0;
+}
+
+.search-dropdown {
+  position: absolute;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  top: 60px;
+  left: 45%;
+  transform: translateX(-50%);
 }

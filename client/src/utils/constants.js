@@ -4,6 +4,7 @@ export const API_ROUTES = {
   LOG_IN: `${API_URL}/user/login`,
   GET_USER_LIST: `${API_URL}/user/list`,
   INITIATE_CHAT: `${API_URL}/messaging/initiate`,
+  SEARCH: `${API_URL}/user/search`,
 }
 
 export const APP_ROUTES = {

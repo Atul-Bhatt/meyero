@@ -5,7 +5,7 @@ import axios from 'axios';
 import {v4 as uuidv4} from 'uuid';
 
 const People = ({ user, photoUrl, setOtherUser, setCanvas}) => {
-  const openChat = async (event) => {
+	const openChat = async (event) => {
 		const token = localStorage.getItem("token");
 		if (token) {
 			axios.defaults.headers.common["Authorization"] = `Bearer ${token}`
