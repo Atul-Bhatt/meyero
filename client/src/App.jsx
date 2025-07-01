@@ -4,6 +4,7 @@ import Login from './Components/Login/Login'
 import Signup from './Components/Signup/Signup'
 import WebSocket from './WebSocket/WebSocket'
 import Home from './Pages/Home/Home'
+import Group from './Pages/Group/Group'
 import NotFound from './Pages/NotFound/NotFound'
 import { Routes, Route } from 'react-router-dom'
 import axios from 'axios';
@@ -20,6 +21,7 @@ function App() {
         <Route path={APP_ROUTES.LOG_IN} element={<Login />} />
         <Route path={APP_ROUTES.SIGN_UP} element={<Signup />} />
         <Route path={APP_ROUTES.WEBSOCKET} element={<WebSocket />} />
+        <Route path={APP_ROUTES.Group} element={<Group />} />
         <Route path='*' element={<NotFound />} />
       </Routes>
     </>

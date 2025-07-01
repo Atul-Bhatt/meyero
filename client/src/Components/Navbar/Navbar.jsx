@@ -75,6 +75,7 @@ const Navbar = ({photoUrl, userName}) => {
         <div className="navbar-dropdown">
           <a href="/profile">Profile</a>
           <a href="/login" onClick={handleLogOut}>Logout</a>
+		  <a href="/group">New Group</a>
         </div>
       </div>
     </nav>

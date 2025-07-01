@@ -12,4 +12,5 @@ export const APP_ROUTES = {
   LOG_IN: '/login',
   HOME: '/',
   WEBSOCKET: '/websocket',
+  Group: '/group'
 }
