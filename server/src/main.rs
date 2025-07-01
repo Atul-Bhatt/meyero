@@ -65,6 +65,7 @@ async fn main() {
         .app_data(web::Data::new(AppState {db: pool.clone() }))
         .configure(routes::user_routes::config)
         .configure(routes::message_routes::config)
+        .configure(routes::group_routes::config)
         .wrap(middleware::Logger::default())
         .wrap(
             actix_cors::Cors::default()
