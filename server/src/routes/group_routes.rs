@@ -1,4 +1,4 @@
-use crate::models::group_model::{Group};
+use crate::models::group_model::{GroupRequest};
 use crate::repository::group_repository;
 use crate::AppState;
 use crate::auth::AuthUser;
@@ -10,7 +10,7 @@ use actix_web::{post, web, Responder, HttpResponse};
 #[post("/create")]
 async fn create_group(
     auth: AuthUser,
-    group: web::Json<Group>,
+    group: web::Json<GroupRequest>,
     data: web::Data<AppState>,
 ) -> impl Responder {
     // check token
