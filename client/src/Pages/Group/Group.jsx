@@ -7,6 +7,8 @@ import People from '../../Components/People/People';
 const Group = () => {
     const [searchText, setSearchText] = useState('');
 	const [users, setUsers] = useState([]);
+    const [addedUsers, setAddedUsers] = useState([]);
+
 	const handleSearch = (event) => {
         event.preventDefault();
 
@@ -56,9 +58,14 @@ const Group = () => {
                 </div>
                 </form>
             </div>
+            <div className='added-user-list'>
+                {addedUsers.map(user => (
+                    <People user={user}/>
+                ))}
             </div>
-            <div className="user-search">
-            <input ref={dropdownRef}
+            </div>
+            <div ref={dropdownRef} className="user-search">
+            <input 
                 type="text"
                 className="user-search-input"
                 placeholder="Search users..."
@@ -68,7 +75,7 @@ const Group = () => {
             {users.length > 0 && (
                 <div className='search-dropdown'>
                     {users.map(user => (
-                        <People user={user}/>
+                        <People user={user} onClick={() => setAddedUsers(prev => [...prev, user])}/>
                     ))}
                 </div>
             )}
