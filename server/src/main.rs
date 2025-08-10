@@ -60,6 +60,7 @@ async fn main() {
         }
    });
 
+   let port = &env::var("PORT").unwrap();
    let _ = HttpServer::new(move || {
         App::new()
         .app_data(web::Data::new(AppState {db: pool.clone() }))
@@ -78,7 +79,7 @@ async fn main() {
                 .max_age(3600),
         )
     })
-    .bind("0.0.0.0:8081").unwrap()
+    .bind("0.0.0.0:".to_owned() + port).unwrap()
     .run()
     .await;
 
