@@ -3,6 +3,7 @@ import Avatar from '@mui/material/Avatar'
 import { API_ROUTES } from '../../utils/constants'
 import axios from 'axios';
 import {v4 as uuidv4} from 'uuid';
+import google_logo from '../Assets/google_logo.png';
 
 const People = ({ user, photoUrl, setOtherUser, setCanvas}) => {
 	const openChat = async (event) => {
@@ -36,7 +37,7 @@ const People = ({ user, photoUrl, setOtherUser, setCanvas}) => {
 
   return (
     <div className='people__main' onClick={openChat}>
-      <Avatar src={photoUrl} />
+      <Avatar src={`./avatars/${user.avatar}.svg`}  />
       <h3>{user.name}</h3>
     </div>
   )
