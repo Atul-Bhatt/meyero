@@ -1,0 +1,17 @@
+CREATE TABLE if not exists groups ( 
+	id UUID PRIMARY KEY NOT NULL DEFAULT (uuid_generate_v4()),
+	name TEXT NOT NULL,
+	created_by TEXT NOT NULL,
+	created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	updated_by TEXT NOT NULL,
+	updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE if not exists group_user ( 
+    group_id UUID NOT NULL REFERENCES groups(id),
+	username UUID NOT NULL REFERENCES users(id),
+	added_by UUID NOT NULL REFERENCES users(id),
+    added_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	removed_by UUID NOT NULL REFERENCES users(id), 
+	removed_at TIMESTAMP WITH TIME ZONE
+);
