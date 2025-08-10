@@ -1,10 +1,11 @@
 import useWebSocket, { ReadyState } from "react-use-websocket"
 import {useEffect} from 'react';
 import Chat from "../Components/Chat/Chat";
+const WEBSOCKET_URL = import.meta.env.VITE_WEBSOCKET_URL 
 
 export const WebSocket = ({otherUser, canvas}) => {
 	const token = localStorage.getItem('token')
-	const socket_url = `ws://localhost:8080/ws/user/${otherUser.id}?token=${token}`
+	const socket_url = `ws://${WEBSOCKET_URL}/ws/user/${otherUser.id}?token=${token}`
 	const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket(
 		socket_url,
 				{

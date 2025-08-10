@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:8081'
+const API_URL = import.meta.env.VITE_API_URL 
 export const API_ROUTES = {
   SIGN_UP: `${API_URL}/user/signup`,
   LOG_IN: `${API_URL}/user/login`,
